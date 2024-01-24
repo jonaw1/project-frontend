@@ -16,4 +16,4 @@
 - [ ] Make tree view for courses, assignments, questions
 - [ ] Make it possible to upload config for questions
 - [x] Add eslint and prettier
-- [ ] Pw needs to actually change in forgot pw and change pw
+- [x] Pw needs to actually change in forgot pw and change pw

@@ -178,6 +178,7 @@ router.post(
       return res.redirect('change-pw');
     }
     const { user_id, first_name, last_name, email } = req.session.user;
+    const encryptedPassword = req.session.user.password;
     const passwordsMatch = password === passwordRepeat;
 
     if (!passwordsMatch) {
@@ -199,6 +200,17 @@ router.post(
       req.flash(
         'error',
         'Das Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen Kleinbuchstaben und einen Großbuchstaben enthalten!'
+      );
+      return res.redirect('/change-pw');
+    }
+
+    if (await bcrypt.compare(password, encryptedPassword)) {
+      logger.info(
+        `Email <${email}> tried to change their password, but used previous password`
+      );
+      req.flash(
+        'error',
+        'Das neue Passwort muss sich vom vorherigen Passwort unterscheiden!'
       );
       return res.redirect('/change-pw');
     }
@@ -331,7 +343,7 @@ router.post(
     }
     await db('users')
       .update({ deleted: true })
-      .where({ user_id: user.user_id });
+      .where({ user_id: user.user_id, email: `${user.email}-deleted` });
     logger.info(`<${user.email}> successfully deleted their account`);
     req.flash('success', 'Account wurde erfolgreich gelöscht!');
     req.session.user = undefined;

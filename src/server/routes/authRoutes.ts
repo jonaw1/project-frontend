@@ -312,6 +312,17 @@ router.post(
       return res.redirect('/forgot-pw');
     }
 
+    if (await bcrypt.compare(password, user.password)) {
+      logger.info(
+        `Email <${email}> tried to request new password, but used previous password`
+      );
+      req.flash(
+        'error',
+        'Das neue Passwort muss sich vom vorherigen Passwort unterscheiden!'
+      );
+      return res.redirect('/forgot-pw');
+    }
+
     const encryptedPw = await bcrypt.hash(password, 10);
     const randomToken = generateRandomToken();
     await db('users')

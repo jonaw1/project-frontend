@@ -57,6 +57,9 @@ router.post('/users/:id', requireAdmin, async (req: Request, res: Response) => {
     `<${currUserEmail}> successfully deleted user <${users[0].email}>`
   );
   req.flash('success', `Nutzer ${users[0].email} wurde erfolgreich gelöscht!`);
+  await db('users')
+    .where({ user_id: id })
+    .update({ email: `${users[0].email}-deleted` }, ['email']);
   return res.redirect('/users');
 });
 
