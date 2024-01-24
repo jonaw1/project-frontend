@@ -14,9 +14,18 @@ const toggleProfileForm = () => {
 const resetFormOnDismissProfileModal = () => {
   const profileModal = document.getElementById('profileModal');
   const profileForm = document.getElementById('editProfileForm');
+  const profileLabel = document.getElementById('profileLabel');
+  const deleteProfileForm = document.getElementById('deleteProfileForm');
   profileModal.addEventListener('hidden.bs.modal', () => {
+    const disabled = document.getElementById('profileFirstNameInput').disabled;
+    profileForm.style.display = 'block';
+    deleteProfileForm.hidden = true;
+    deleteProfileForm.reset();
+    profileLabel.innerHTML = 'Mein Profil';
     profileForm.reset();
-    toggleProfileForm();
+    if (!disabled) {
+      toggleProfileForm();
+    }
   });
 };
 
@@ -46,7 +55,8 @@ const validateRegister = () => {
   }
   const form =
     document.getElementById('registerForm') ||
-    document.getElementById('forgotPwForm');
+    document.getElementById('forgotPwForm') ||
+    document.getElementById('changePwForm');
   const password1InvalidFeedback = document.getElementById(
     'password1InvalidFeedback'
   );
@@ -147,6 +157,16 @@ const validateConfirmDelete = () => {
       event.preventDefault();
     }
   });
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const showDeleteProfile = () => {
+  const profileLabel = document.getElementById('profileLabel');
+  profileLabel.innerHTML = 'Profil löschen';
+  const editProfileForm = document.getElementById('editProfileForm');
+  editProfileForm.style.display = 'none';
+  const deleteProfileForm = document.getElementById('deleteProfileForm');
+  deleteProfileForm.hidden = false;
 };
 
 validateRegister();

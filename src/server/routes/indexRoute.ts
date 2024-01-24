@@ -298,4 +298,45 @@ router.get(
   }
 );
 
+router.post(
+  '/delete-acc',
+  requireAuthenticated,
+  async (req: Request, res: Response) => {
+    const { password } = req.body;
+    const user = req.session.user;
+    if (!user) {
+      logger.error(
+        `User tried to delete their account, but user doesn't exist`
+      );
+      req.flash('error', 'Löschen fehlgeschlagen. Account nicht gefunden!');
+      return res.redirect('back');
+    }
+    const admins = await db('users').where({ admin: true });
+    if (user.admin && admins.length == 1) {
+      logger.info(
+        `User <${user.email}> tried to delete their account, but is only admin`
+      );
+      req.flash(
+        'error',
+        'Löschen nicht möglich, da Sie der einzige Administrator sind!'
+      );
+      return res.redirect('back');
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
+      logger.info(
+        `User <${user.email}> tried to delete their account, but entered wrong password`
+      );
+      req.flash('error', 'Ungültiges Passwort! Bitte erneut versuchen.');
+      return res.redirect('back');
+    }
+    await db('users')
+      .update({ deleted: true })
+      .where({ user_id: user.user_id });
+    logger.info(`<${user.email}> successfully deleted their account`);
+    req.flash('success', 'Account wurde erfolgreich gelöscht!');
+    req.session.user = undefined;
+    return res.redirect('back');
+  }
+);
+
 export default router;

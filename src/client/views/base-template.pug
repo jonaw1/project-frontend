@@ -70,10 +70,31 @@ html(lang="en")
                           option(value="1", selected=user && user.admin) Administrator
                   span.mb-2
                     a.me-2(href="/change-pw") Passwort ändern
-                    a.text-danger.ms-auto(href="/") Profil löschen
+                    a.text-danger.ms-auto(href="javascript:showDeleteProfile();") Profil löschen
                 .modal-footer 
                   button#editButton.btn.btn-primary(type="button", onclick="toggleProfileForm()") Ändern
                   button#submitProfileBtn.btn.btn-primary(type="submit", hidden) Speichern
+                  button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
+              form#deleteProfileForm(action=`/delete-acc`, method="post", hidden)
+                .modal-body 
+                  p.mb-4
+                    code.text-danger Achtung: Profil wird endgültig gelöscht. Bitte Passwort eingeben und Schalter umlegen.
+                  .form-group.mb-4
+                      label(for="profileEmailInput") Passwort
+                          span.text-danger  *
+                      input#deleteProfilePwInput.form-control(type="password", placeholder="Passwort eingeben", name="password", required)
+                  .row.mb-2.mx-auto
+                    .col.d-flex.justify-content-center
+                      .form-check.form-switch
+                        input.form-check-input(type="checkbox", role="switch", required)
+                    .col.d-flex.justify-content-center
+                      .form-check.form-switch
+                        input.form-check-input(type="checkbox", role="switch", required)
+                    .col.d-flex.justify-content-center
+                      .form-check.form-switch
+                        input.form-check-input(type="checkbox", role="switch", required)
+                .modal-footer 
+                  button#deleteProfileButton.btn.btn-primary(type="submit") Profil löschen
                   button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
 
     block content

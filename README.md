@@ -10,7 +10,7 @@
 - [x] Send email on change email
 - [x] Make change email work
 - [x] Log out if account deleted middleware
-- [ ] Delete own account
+- [x] Delete own account
 - [x] Make delete profile work
 - [ ] Make change user work
 - [ ] Make tree view for courses, assignments, questions
