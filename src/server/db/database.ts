@@ -1,5 +1,6 @@
-import knex from 'knex';
+import knex, { Knex } from 'knex';
 import logger from '../shared/logger';
+import { migrate } from './migrate';
 
 const config = {
   client: 'sqlite3',
@@ -9,87 +10,37 @@ const config = {
   useNullAsDefault: true
 };
 
-export const db = knex(config);
+export const db: Knex = knex(config);
 
-export const startDatabase = async () => {
-  try {
-    if (!(await db.schema.hasTable('users'))) {
-      await db.schema.createTable('users', (table) => {
-        table.increments('user_id').notNullable();
-        table.string('first_name').nullable();
-        table.string('last_name').nullable();
-        table.string('email').notNullable();
-        table.boolean('admin').notNullable().defaultTo(false);
-        table.boolean('active').notNullable().defaultTo(false);
-        table.boolean('deleted').notNullable().defaultTo(false);
-        table.string('confirmation_token').nullable();
-        table.string('password').nullable();
-        table.date('token_expires_at').nullable();
-        table.string('new_pw').nullable();
-        table.string('forgot_pw_token').nullable();
-        table.date('forgot_pw_token_expires_at').nullable();
-        table.string('new_email').nullable();
-        table.string('confirm_new_email_token').nullable();
-        table.date('confirm_new_email_token_expires_at').nullable();
-        table.string('new_pw_change').nullable();
-        table.string('change_pw_token').nullable();
-        table.string('change_pw_token_expires_at').nullable();
-      });
+interface MasterTable {
+  name: string;
+}
+
+export const startDatabase = async (
+  input: { reset: boolean } = { reset: false }
+) => {
+  if (!!input.reset && process.env.STAGE == 'development') {
+    try {
+      const tablesResult: MasterTable[] = await db.raw(
+        'SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%" AND name != "sessions"'
+      );
+      const tableNames = tablesResult.map((table) => table.name);
+      await Promise.all(
+        tableNames.map((tableName) =>
+          db.raw(`DROP TABLE IF EXISTS ${tableName}`)
+        )
+      );
+      logger.info('All tables dropped successfully');
+    } catch (error) {
+      logger.error('Error dropping tables:', error);
+      return;
     }
 
-    if (!(await db.schema.hasTable('courses'))) {
-      await db.schema.createTable('courses', (table) => {
-        table.increments('course_id');
-        table.string('name').notNullable();
-        table
-          .integer('user_id')
-          .references('user_id')
-          .inTable('users')
-          .notNullable();
-      });
+    try {
+      await migrate(db);
+      logger.info('Database was started successfully');
+    } catch (error) {
+      logger.error('Error starting database:', error);
     }
-
-    if (!(await db.schema.hasTable('assignments'))) {
-      await db.schema.createTable('assignments', (table) => {
-        table.increments('assignment_id');
-        table.string('name');
-        table
-          .integer('course_id')
-          .references('course_id')
-          .inTable('courses')
-          .notNullable();
-      });
-    }
-
-    if (!(await db.schema.hasTable('tasks'))) {
-      await db.schema.createTable('tasks', (table) => {
-        table.increments('task_id');
-        table.json('settings');
-        table
-          .integer('assignment_id')
-          .references('assignment_id')
-          .inTable('assignments')
-          .notNullable();
-      });
-    }
-
-    const rootUserDoesNotExist = await db('users')
-      .select()
-      .then((rows) => {
-        return rows.length === 0;
-      });
-
-    if (rootUserDoesNotExist) {
-      await db
-        .insert({
-          email: process.env.ROOT_USER_EMAIL || 'admin@admin.com',
-          admin: 1
-        })
-        .into('users');
-    }
-
-    logger.info('Database was started successfully');
-  } catch (error) {
-    logger.error('Error starting database:', error);
   }
 };

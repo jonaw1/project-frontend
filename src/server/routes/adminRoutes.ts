@@ -14,7 +14,7 @@ const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
 
 router.get('/users', requireAdmin, async (req: Request, res: Response) => {
   const users = await db.select().from('users').whereNot('deleted', 1);
-  res.render('users', { users });
+  res.render('users', { users, route: 'users' });
 });
 
 router.post('/users/:id', requireAdmin, async (req: Request, res: Response) => {

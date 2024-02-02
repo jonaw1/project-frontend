@@ -153,7 +153,6 @@ const validateConfirmDelete = () => {
       return element.style.display === 'inline-block';
     });
     if (isInvalid) {
-      console.log('prevent default');
       event.preventDefault();
     }
   });
@@ -169,5 +168,108 @@ const showDeleteProfile = () => {
   deleteProfileForm.hidden = false;
 };
 
+const addListenersSelectable = () => {
+  const selectables = document.getElementsByClassName('selectable');
+  if (selectables.length == 0) {
+    return;
+  }
+  for (const selectable of selectables) {
+    selectable.addEventListener('click', async () => {
+      if (selectable.classList.contains('selected')) {
+        selectable.classList.remove('selected');
+        selectable.classList.add('selectable-hover');
+        if (selectable.id.startsWith('task-')) {
+        } else {
+          document.getElementById(selectable.id + '-toggle').hidden = true;
+        }
+      } else {
+        selectable.classList.add('selected');
+        selectable.classList.remove('selectable-hover');
+        if (selectable.id.startsWith('task-')) {
+          const tasks = document.getElementsByClassName('task');
+          for (const task of tasks) {
+            if (task != selectable) {
+              task.classList.remove('selected');
+              task.classList.add('selectable-hover');
+            }
+          }
+          const taskConfiguration = await fetchTaskConfiguration(
+            selectable.getAttribute('data-task-id')
+          );
+          const config = document.getElementById('configuration');
+          config.value = taskConfiguration;
+          config.scrollTo(0, 0);
+        } else {
+          document.getElementById(selectable.id + '-toggle').hidden = false;
+        }
+      }
+    });
+  }
+};
+
+const fetchTaskConfiguration = async (taskId) => {
+  const actor = document.getElementById('user').getAttribute('data-user-email');
+  try {
+    const response = await fetch(`/api/configuration/${taskId}`, {
+      headers: { actor }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch task configuration');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error('Error fetching task configuration');
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const updateConfiguration = async (actor) => {
+  const configuration = document.getElementById('configuration').value;
+  const task = document.getElementsByClassName('selected task')[0];
+  if (!task) {
+    return;
+  }
+  const taskId = task.getAttribute('data-task-id');
+  const headers = {
+    actor,
+    'Content-Type': 'application/json'
+  };
+  const options = {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ configuration })
+  };
+  const response = await fetch(`/api/configuration/${taskId}`, options);
+  if (!response.ok) {
+    showAlert('error', 'Fehler beim Speichern der Konfiguration!', 5);
+    return;
+  }
+  showAlert('success', '✅ Konfiguration erfolgreich gespeichert!', 5);
+};
+
+let timeOutId;
+
+const showAlert = (type, text) => {
+  const alert = document.getElementById('myAlert');
+  alert.innerHTML = text;
+  if (type == 'success') {
+    alert.style.borderColor = 'green';
+  } else {
+    alert.style.borderColor = 'red';
+  }
+  if (timeOutId) {
+    clearTimeout(timeOutId);
+  }
+  alert.hidden = false;
+  alert.classList.remove('start-animation');
+  alert.classList.add('start-animation');
+  timeOutId = setTimeout(() => {
+    alert.hidden = true;
+    alert.classList.remove('start-animation');
+  }, 3000);
+};
+
+addListenersSelectable();
 validateRegister();
 resetFormOnDismissProfileModal();

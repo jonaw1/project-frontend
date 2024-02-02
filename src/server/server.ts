@@ -4,6 +4,7 @@ import path from 'path';
 import indexRoute from './routes/indexRoute';
 import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRoutes';
+import apiRoutes from './routes/apiRoutes';
 import session from 'express-session';
 import { startDatabase } from './db/database';
 import KnexSessionStore, { StoreFactory } from 'connect-session-knex';
@@ -53,7 +54,9 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   if (req.session.user) {
     const userStillExists = await db('users')
       .where({
-        user_id: req.session.user.user_id
+        user_id: req.session.user.user_id,
+        active: true,
+        deleted: false
       })
       .first();
 
@@ -71,6 +74,7 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+app.use('/', apiRoutes);
 app.use('/', indexRoute);
 app.use('/', authRoutes);
 app.use('/', adminRoutes);
@@ -87,7 +91,7 @@ app.use((req: Request, res: Response) => {
   return res.redirect('/');
 });
 
-startDatabase().then(() => {
+startDatabase({ reset: false }).then(() => {
   app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
   });

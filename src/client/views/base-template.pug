@@ -10,19 +10,24 @@ html(lang="en")
 
   body
     header
-      nav.navbar.navbar-expand-lg.mt-3.mx-4(class=success || error ? "" : "mb-5")
+      p#user(hidden, data-user-email=user ? user.email : null)
+      div#myAlert(hidden)
+      nav.navbar.navbar-expand-lg.mt-3.mx-4.mb-5
         .container-fluid
           a.navbar-brand.me-4(href="/") Home
           button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarSupportedContent", aria-controls="navbarSupportedContent", aria-expanded="false", aria-label="Toggle navigation")
             span.navbar-toggler-icon 
           #navbarSupportedContent.collapse.navbar-collapse
             ul.navbar-nav.my-auto.mb-2.mb-lg-0
-                if user && user.admin
-                  li.mx-4
-                    a.nav-link(href="/users") Nutzer verwalten
                 if user
-                  li.mx-4
-                    a.nav-link(href="/courses") Meine Kurse
+                  li.mx-2
+                    a.nav-link(href="/courses", class=route == 'courses' ? "highlighted" : "") Meine Kurse
+                if user && user.admin
+                  li.mx-2
+                    a.nav-link(href="/users", class=route == 'users' ? "highlighted" : "") Nutzer verwalten
+                if user && user.admin 
+                  li.mx-2
+                      a.nav-link(href="/all-courses", class=route == 'all-courses' ? "highlighted" : "") Alle Kurse verwalten
             ul.navbar-nav.ms-auto.mb-2.mb-lg-0
               if user
                 li.mx-2
@@ -36,13 +41,13 @@ html(lang="en")
                 li.mx-2
                   button.btn.btn-secondary(onclick="location.href = '/register'") Registrieren
       if success
-        .alert.alert-success.alert-dismissible.fade.show.mx-4(role="alert")
+        .alert.alert-success.alert-dismissible.fade.show(role="alert")
           strong= success
-          button.btn-close(type="button", data-bs-dismiss="alert" aria-label="Close")
+          button.btn-close(type="button", data-bs-dismiss="alert", aria-label="Close")
       if error
-        .alert.alert-danger.alert-dismissible.fade.show.mx-4(role="alert")
+        .alert.alert-danger.alert-dismissible.fade.show(role="alert")
           strong= error
-          button.btn-close(type="button", data-bs-dismiss="alert" aria-label="Close")
+          button.btn-close(type="button", data-bs-dismiss="alert", aria-label="Close")
     #profileModal.modal.fade(tabindex="-1", aria-labelledby="profileLabel", aria-hidden="true")
       .modal-dialog
           .modal-content

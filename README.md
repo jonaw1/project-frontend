@@ -2,18 +2,8 @@
 
 ## To-Do
 
-- [x] Send confirmation email on register
-- [x] Make forgot pw work
-- [x] Make change pw work
-- [x] make sure passwords are identical on register
-- [x] make sure passwords fulfill criteria
-- [x] Send email on change email
-- [x] Make change email work
-- [x] Log out if account deleted middleware
-- [x] Delete own account
-- [x] Make delete profile work
-- [ ] Make change user work
-- [ ] Make tree view for courses, assignments, questions
-- [ ] Make it possible to upload config for questions
-- [x] Add eslint and prettier
-- [x] Pw needs to actually change in forgot pw and change pw
+- [ ] #01 /users -> Make "Ändern"-button work
+- [ ] #02 Secure API routes /api/configuration/:task-id (for GET and PUT)
+- [ ] #03 API route PUT /api/configuration/:task-id -> Make sure input is valid JSON
+- [ ] #04 Enable admin route /all-courses -> This should be similar to /courses but have courses of all users
+- [ ] #05 /courses -> Make it possible to add, delete and edit courses, exercises and tasks

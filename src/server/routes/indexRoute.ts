@@ -25,8 +25,41 @@ const requireAuthenticated = (
 };
 
 router.get('/', (req: Request, res: Response) => {
+  const user_id = req.session.user?.user_id;
+  if (!!user_id) {
+    return res.redirect('/courses');
+  }
   return res.render('index');
 });
+
+router.get(
+  '/courses',
+  requireAuthenticated,
+  async (req: Request, res: Response) => {
+    const user_id = req.session.user?.user_id;
+    let courses;
+    try {
+      courses = await db('courses').where({ user_id });
+      for (const course of courses) {
+        const assignments = await db('assignments').where({
+          course_id: course.course_id
+        });
+        for (const assignment of assignments) {
+          assignment.tasks = await db('tasks').where({
+            assignment_id: assignment.assignment_id
+          });
+        }
+        course.assignments = assignments;
+      }
+    } catch (error) {
+      logger.error('Error while fetching tree data:', error);
+    }
+    logger.info(
+      `User <${req.session.user?.email}> successfully fetched tree data`
+    );
+    return res.render('courses', { route: 'courses', courses });
+  }
+);
 
 router.post('/logout', requireAuthenticated, (req: Request, res: Response) => {
   delete req.session.user;
