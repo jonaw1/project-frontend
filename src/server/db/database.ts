@@ -35,12 +35,12 @@ export const startDatabase = async (
       logger.error('Error dropping tables:', error);
       return;
     }
+  }
 
-    try {
-      await migrate(db);
-      logger.info('Database was started successfully');
-    } catch (error) {
-      logger.error('Error starting database:', error);
-    }
+  try {
+    await migrate(db);
+    logger.info('Database was started successfully');
+  } catch (error) {
+    logger.error('Error starting database:', error);
   }
 };
