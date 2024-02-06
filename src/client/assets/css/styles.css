@@ -23,7 +23,7 @@
 .card {
   border: none;
   padding: 1rem;
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(240, 240, 240) !important;
   border-radius: 7px;
   height: 75vh;
   overflow: scroll;
@@ -33,7 +33,7 @@
   transition: border 0.15s ease-in-out;
 }
 
-.card:hover {
+.blue-border:hover {
   border: 3px solid rgb(133, 183, 254);
 }
 
@@ -104,4 +104,8 @@ p {
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
+}
+
+#invalidJsonText {
+  font-size: 0.875rem;
 }

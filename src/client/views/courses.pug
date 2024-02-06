@@ -5,7 +5,7 @@ block content
     .row
       .col-4
         button.btn.btn-sm.btn-primary.mb-2 Kurs hinzufügen
-        .card
+        .card.blue-border
           if courses
             each course in courses 
               p.selectable.selectable-hover(id="course-" + course.course_id)="> " + course.course_name
@@ -18,5 +18,7 @@ block content
                         each task in assignment.tasks 
                           p.task.selectable.selectable-hover.ps-4(id="task-" + task.task_id, data-task-id=task.task_id)="- " + task.task_name
       .col-7.ms-3
-        button.btn.btn-sm.btn-primary.mb-2(onclick="updateConfiguration('" + user.email + "')") Konfiguration speichern
-        textarea#configuration.form-control.card.json
+        .d-flex.align-items-center.mb-2
+          button#saveConfigBtn.btn.btn-sm.btn-primary(onclick="updateConfiguration('" + user.email + "')") Konfiguration speichern
+          span#invalidJsonText.text-danger.ms-3(hidden) Eingabe ist kein gültiges JSON-Format
+        textarea#configuration.form-control.card.json.blue-border
