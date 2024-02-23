@@ -22,7 +22,7 @@ router.get(
       courses = await db('courses');
       for (const course of courses) {
         const assignments = await db('assignments').where({
-          course_id: course.course_idK
+          course_id: course.course_id
         });
         for (const assignment of assignments) {
           assignment.tasks = await db('tasks').where({
