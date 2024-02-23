@@ -127,6 +127,27 @@ const openDeleteModal = (button) => {
   resetFormOnDismissDeleteModal();
 };
 
+const openEditModal = (button) => {
+  const userEmail = button.getAttribute('data-user-email');
+  const userId = button.getAttribute('data-user-id');
+  const userFirstName = button.getAttribute('data-user-firstName');
+  const userLastName = button.getAttribute('data-user-lastName');
+  const userAdmin = button.getAttribute('data-user-admin');
+  formUserFirstName = document.getElementById('userFirstName');
+  formUserLastName = document.getElementById('userLastName'); 
+  formUserEmail = document.getElementById('userEmail');
+  formUserAdmin = document.getElementById('userAdmin');
+  if (userFirstName != null) {
+    formUserFirstName.value = `${userFirstName} `;
+  }  
+  if (userLastName != null) {
+    formUserLastName.value = `${userLastName} `;
+  } 
+  formUserEmail.value = `${userEmail} `;
+  formUserAdmin.value = userAdmin;
+  editUserForm.action = `/users/edit/${userId}`;
+};
+
 const validateConfirmDelete = () => {
   const deleteConfirmInput = document.getElementById('deleteConfirmInput');
   const email = document.getElementById('deleteUserEmail').innerHTML.trim();

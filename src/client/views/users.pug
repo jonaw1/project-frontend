@@ -27,7 +27,16 @@ block content
                             td.align-middle.text-danger Inaktiv
                         td.align-middle 
                             span 
-                                button.btn.btn-sm.btn-secondary.me-2 Ändern
+                                button.btn.btn-sm.btn-secondary.me-2(
+                                    data-bs-toggle="modal", 
+                                    data-bs-target="#editUserModal", 
+                                    data-user-email=usr.email, 
+                                    data-user-id=usr.user_id,
+                                    data-user-firstName=usr.first_name,
+                                    data-user-lastName=usr.last_name,
+                                    data-user-admin=usr.admin,
+                                    onclick="openEditModal(this)"
+                                ) Ändern
                                 button.btn.btn-sm.btn-danger(
                                     data-bs-toggle="modal", 
                                     data-bs-target="#deleteUserModal", 
@@ -72,4 +81,33 @@ block content
                         #deleteConfirmInvalidFeedback.small.text-danger.invalid-feedb Email stimmt nicht überein.
                     .modal-footer
                         button.btn.btn-danger(type="submit") Löschen
+                        button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
+    #editUserModal.modal.fade(tabindex="-1", aria-labelledby="editUserLabel", aria-hidden="true")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    h5#editUserLabel.modal-title Nutzer ändern
+                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                form#editUserForm(action="", method="post")
+                    .modal-body
+                        .form-group.mb-2
+                            label(for="userFirstName") Vorname 
+                                span.text-danger *
+                            input#userFirstName.form-control(placeholder="Vorname", value=usr ? usr.first_name : "", name="first_name")
+                        .form-group.mb-2
+                            label(for="userLastName") Nachname 
+                                span.text-danger *
+                            input#userLastName.form-control(placeholder="Nachname", value=usr ? usr.last_name : "", name="last_name")
+                        .form-group.mb-2
+                            label(for="userEmail") Email 
+                                span.text-danger *
+                            input#userEmail.form-control(type="email", placeholder="email", value=usr ? usr.email : "", name="email", required)
+                        .form-group.mb-2
+                            label(for="userAdmin") Rolle  
+                                span.text-danger *
+                            select#userAdmin.form-select(name="admin", required)
+                                option(value="0") Nutzer
+                                option(value="1") Administrator
+                    .modal-footer
+                        button.btn.btn-primary(type="submit") Ändern
                         button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen

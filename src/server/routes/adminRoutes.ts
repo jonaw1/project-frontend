@@ -63,6 +63,39 @@ router.post('/users/:id', requireAdmin, async (req: Request, res: Response) => {
   return res.redirect('/users');
 });
 
+router.post('/users/edit/:id', requireAdmin, async (req: Request, res: Response) => {
+  const currUserEmail = req.session?.user?.email;
+  const id = req.params.id;
+  const email = req.body.email;
+  const firstName = req.body.first_name;
+  const lastName = req.body.last_name;
+  const admin = req.body.admin;
+  logger.info(`User: <${currUserEmail}> id:<${id}> email:<${email}> firstName:<${firstName}> lastName:<${lastName}> admin:<${admin}>`)
+
+  const user = await db('users').where({ user_id: id }).first();
+  const admins = await db('users').where({ admin: true });
+
+  if (user.admin && admins.length == 1 && admin == 0) {
+    logger.info(
+      `User <${currUserEmail}> tried to delete their account, but is only admin`
+    );
+    req.flash(
+      'error',
+      'Entfernen der Administrator-Rolle nicht möglich, da Sie der einzige Administrator sind!'
+    );
+    return res.redirect('/users');
+  }
+
+  await db('users')
+    .where({ user_id: id })
+    .update({ first_name: firstName, last_name: lastName, email: email, admin: admin }, ['first_name', 'last_name', 'email', 'admin']);
+    logger.info(
+      `<${currUserEmail}> successfully edited user <${email}>`
+    );
+    req.flash('success', `Nutzer ${email} wurde erfolgreich geändert!`);
+  return res.redirect('/users');
+});
+
 router.post('/users', requireAdmin, async (req: Request, res: Response) => {
   const body = req.body;
   body.email = body.email.trim().toLowerCase();
