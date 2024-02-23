@@ -59,6 +59,16 @@ router.put('/api/configuration/:task_id', async (req, res) => {
         error: 'configuration is required in the put config request body'
       });
     }
+    try {
+      JSON.parse(configuration);
+    } catch (e) {
+      logger.error(
+        `User <${actor}> tried to update config of task <${task_id}>, but config is not valid JSON`
+      );
+      return res.status(400).json({
+        error: 'configuration must be valid JSON'
+      });
+    }
     await db('tasks').where({ task_id }).update({ configuration });
     logger.info(
       `User <${actor}> successfully updated config for task <${task_id}>`

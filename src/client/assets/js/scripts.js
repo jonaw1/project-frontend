@@ -220,6 +220,7 @@ const addListenersSelectable = () => {
           const config = document.getElementById('configuration');
           config.value = taskConfiguration;
           config.scrollTo(0, 0);
+          checkValidJSON();
         } else {
           document.getElementById(selectable.id + '-toggle').hidden = false;
         }
@@ -291,6 +292,43 @@ const showAlert = (type, text) => {
   }, 3000);
 };
 
+const addListenersConfiguration = () => {
+  const configurationTextArea = document.getElementById('configuration');
+  if (!configurationTextArea) {
+    return;
+  }
+  configurationTextArea.addEventListener('keyup', () => {
+    checkValidJSON();
+  });
+};
+
+const checkValidJSON = () => {
+  const configurationTextArea = document.getElementById('configuration');
+  const configuration = configurationTextArea.value;
+  const saveBtn = document.getElementById('saveConfigBtn');
+  if (!isValidJSON(configuration)) {
+    configurationTextArea.classList.add('is-invalid');
+    configurationTextArea.classList.remove('blue-border');
+    saveBtn.disabled = true;
+    document.getElementById('invalidJsonText').hidden = false;
+    return;
+  }
+  configurationTextArea.classList.remove('is-invalid');
+  configurationTextArea.classList.add('blue-border');
+  saveBtn.disabled = false;
+  document.getElementById('invalidJsonText').hidden = true;
+};
+
+const isValidJSON = (s) => {
+  try {
+    JSON.parse(s);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
+addListenersConfiguration();
 addListenersSelectable();
 validateRegister();
 resetFormOnDismissProfileModal();
