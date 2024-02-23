@@ -114,7 +114,8 @@ if (process.env.STAGE == 'development') {
       const courseData = [
         { course_name: 'Objektorientierte Programmierung', user_id },
         { course_name: 'Softwaretechnik', user_id },
-        { course_name: 'Algorithmen & Datenstrukturen', user_id }
+        { course_name: 'Algorithmen & Datenstrukturen', user_id },
+        { course_name: 'Testkurs', user_id: 2 }
       ];
       const courses = await db('courses')
         .insert(courseData)

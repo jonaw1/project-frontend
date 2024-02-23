@@ -12,6 +12,35 @@ const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+router.get(
+  '/all-courses',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    const user_id = req.session.user?.user_id;
+    let courses;
+    try {
+      courses = await db('courses');
+      for (const course of courses) {
+        const assignments = await db('assignments').where({
+          course_id: course.course_idK
+        });
+        for (const assignment of assignments) {
+          assignment.tasks = await db('tasks').where({
+            assignment_id: assignment.assignment_id
+          });
+        }
+        course.assignments = assignments;
+      }
+    } catch (error) {
+      logger.error('Error while fetching tree data:', error);
+    }
+    logger.info(
+      `User <${req.session.user?.email}> successfully fetched tree data`
+    );
+    return res.render('all-courses', { route: 'all-courses', courses });
+  }
+);
+
 router.get('/users', requireAdmin, async (req: Request, res: Response) => {
   const users = await db.select().from('users').whereNot('deleted', 1);
   res.render('users', { users, route: 'users' });
