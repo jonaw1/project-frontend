@@ -1,0 +1,87 @@
+openapi: 3.0.1
+info:
+  title: Next.js API
+  version: '1.0'
+servers:
+  - url: '{server}/api'
+    variables:
+      server:
+        default: https://localhost:3000  # development server
+paths:
+  /run:
+    post:
+      summary: Executes operations using a specified configuration file and returns feedback.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task_id:
+                  type: integer
+                  description: Task ID
+                answers:
+                  type: array
+                  items:
+                    type: string
+                  description: The code to execute.
+      responses:
+        200:
+          description: Successful operation, feedback is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunResponse'
+  /tasks:
+    get:
+      summary: List all available tasks.
+      responses:
+        200:
+          description: A list of tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+components:
+  schemas:
+    RunResponse:
+      type: object
+      properties:
+        feedback:
+          type: string
+    Task:
+      type: object
+      properties:
+        task_id:
+          type: integer
+        task_name:
+          type: string
+      required:
+        - task_id
+        - task_name
+    Assignment:
+      type: object
+      properties:
+        assignment_name:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+      required:
+        - assignment_name
+        - tasks
+    Course:
+      type: object
+      properties:
+        course_name:
+          type: string
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+      required:
+        - course_name
+        - assignments

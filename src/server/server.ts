@@ -13,6 +13,7 @@ import flash from 'connect-flash';
 import { User } from './shared/types';
 import dotenv from 'dotenv';
 import logger from './shared/logger';
+import publicRoutes from './routes/publicRoutes';
 
 declare module 'express' {
   interface Request {
@@ -78,6 +79,7 @@ app.use('/', apiRoutes);
 app.use('/', indexRoute);
 app.use('/', authRoutes);
 app.use('/', adminRoutes);
+app.use('/', publicRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction): void => {
