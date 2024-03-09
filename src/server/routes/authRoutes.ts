@@ -53,9 +53,12 @@ router.post(
       .first();
     if (!!inactiveUser) {
       logger.info(
-        `User <${inactiveUser.email}> tried to log in, but didn't confirm yet`
+        `User <${inactiveUser.email}> tried to log in, but didn't register/confirm yet`
       );
-      req.flash('error', 'Bitte zunächst Email-Adresse bestätigen!');
+      req.flash(
+        'error',
+        'Bitte zunächst registrieren oder Email-Adresse bestätigen!'
+      );
       return res.redirect('/login');
     }
 

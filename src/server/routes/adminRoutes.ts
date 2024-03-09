@@ -1,6 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '../db/database';
 import logger from '../shared/logger';
+import { EmailType, User } from '../shared/types';
+import { craftEmail, generateRandomToken } from '../shared/utils';
+import sendEmail from '../shared/email';
 
 const router = Router();
 
@@ -16,7 +19,6 @@ router.get(
   '/all-courses',
   requireAdmin,
   async (req: Request, res: Response) => {
-    const user_id = req.session.user?.user_id;
     let courses;
     try {
       courses = await db('courses');
@@ -92,38 +94,111 @@ router.post('/users/:id', requireAdmin, async (req: Request, res: Response) => {
   return res.redirect('/users');
 });
 
-router.post('/users/edit/:id', requireAdmin, async (req: Request, res: Response) => {
-  const currUserEmail = req.session?.user?.email;
-  const id = req.params.id;
-  const email = req.body.email;
-  const firstName = req.body.first_name;
-  const lastName = req.body.last_name;
-  const admin = req.body.admin;
-  logger.info(`User: <${currUserEmail}> id:<${id}> email:<${email}> firstName:<${firstName}> lastName:<${lastName}> admin:<${admin}>`)
+router.post(
+  '/users/edit/:id',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    const currUserEmail = req.session?.user?.email;
+    const user_id = req.params.id;
+    const { email, first_name, last_name, admin } = req.body;
 
-  const user = await db('users').where({ user_id: id }).first();
-  const admins = await db('users').where({ admin: true });
+    const editUser: User = await db('users').where({ user_id }).first();
+    if (!editUser) {
+      logger.error(
+        `User <${currUserEmail}> tried to edit user with ID<${user_id}>, but user not found`
+      );
+      req.flash('error', 'Nutzer wurde nicht gefunden!');
+      return res.redirect('/users');
+    }
 
-  if (user.admin && admins.length == 1 && admin == 0) {
-    logger.info(
-      `User <${currUserEmail}> tried to delete their account, but is only admin`
-    );
-    req.flash(
-      'error',
-      'Entfernen der Administrator-Rolle nicht möglich, da Sie der einzige Administrator sind!'
-    );
+    if (admin == 0 && editUser.admin) {
+      logger.error(
+        `User <${currUserEmail}> tried to downgrade user <${editUser.email}> from admin to user -> not allowed`
+      );
+      req.flash('error', 'Ändern von Admin zu Nutzer nicht erlaubt!');
+      return res.redirect('/users');
+    }
+
+    type UpdateUserBody = {
+      first_name?: string;
+      last_name?: string;
+      admin?: boolean;
+    };
+    const updateObject: UpdateUserBody = {};
+    if (first_name != editUser.first_name) {
+      updateObject['first_name'] = first_name;
+    }
+    if (last_name != editUser.last_name) {
+      updateObject['last_name'] = last_name;
+    }
+    if (admin != editUser.admin) {
+      updateObject['admin'] = admin == 0 ? false : true;
+    }
+
+    let flashMessage;
+    if (Object.keys(updateObject).length > 0) {
+      await db('users').where({ user_id }).update(updateObject);
+      logger.info(
+        `<${currUserEmail}> successfully edited user <${editUser.email}>`
+      );
+      flashMessage = `Nutzer ${editUser.email} wurde erfolgreich geändert!`;
+    }
+
+    if (email != editUser.email) {
+      const userForEmailExists = await db('users').where({ email }).first();
+      if (!!userForEmailExists) {
+        logger.error(
+          `User <${currUserEmail}> tried to change email of user with ID<${user_id}>, but new email already in use`
+        );
+        req.flash('error', 'Email wird bereits genutzt!');
+        return res.redirect('/users');
+      }
+      const randomToken = generateRandomToken();
+      try {
+        const url = `${process.env.BASE_URL}/confirm-new-email/${randomToken}`;
+        await sendEmail(
+          email,
+          'Bestätigen Sie Ihre neue Email-Adresse',
+          craftEmail({
+            firstName: first_name,
+            lastName: last_name,
+            url,
+            emailType: EmailType.ForeignEmailChange,
+            actor: currUserEmail
+          })
+        );
+      } catch (error) {
+        logger.error(
+          `Error sending email while user <${currUserEmail}> tried to change email of <${editUser.email}>:`,
+          error
+        );
+        req.flash(
+          'error',
+          'Fehler beim Senden der Bestätigungsemail, bitte Administrator kontaktieren!'
+        );
+        return res.redirect('/users');
+      }
+
+      const emailUpdateObject = {
+        new_email: email,
+        confirm_new_email_token: randomToken,
+        confirm_new_email_token_expires_at: new Date(
+          new Date().getTime() + 60000 * 60 * 24
+        )
+      };
+      await db('users').where({ user_id }).update(emailUpdateObject);
+      logger.info(
+        `<${currUserEmail}> requested email change for <${editUser.email}>, confirmation email sent`
+      );
+      flashMessage = `Bestätigungsemail zum Ändern der Email versandt an <${email}>!`;
+    }
+
+    if (flashMessage) {
+      req.flash('success', flashMessage);
+    }
     return res.redirect('/users');
   }
-
-  await db('users')
-    .where({ user_id: id })
-    .update({ first_name: firstName, last_name: lastName, email: email, admin: admin }, ['first_name', 'last_name', 'email', 'admin']);
-    logger.info(
-      `<${currUserEmail}> successfully edited user <${email}>`
-    );
-    req.flash('success', `Nutzer ${email} wurde erfolgreich geändert!`);
-  return res.redirect('/users');
-});
+);
 
 router.post('/users', requireAdmin, async (req: Request, res: Response) => {
   const body = req.body;

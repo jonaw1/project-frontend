@@ -25,10 +25,12 @@ export type CraftEmailInput = {
   lastName: string;
   url: string;
   emailType: EmailType;
+  actor?: string;
 };
 
 export enum EmailType {
   ConfirmRegistration,
   ConfirmNewPw,
-  ConfirmNewEmail
+  ConfirmNewEmail,
+  ForeignEmailChange
 }

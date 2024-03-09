@@ -127,25 +127,27 @@ const openDeleteModal = (button) => {
   resetFormOnDismissDeleteModal();
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const openEditModal = (button) => {
-  const userEmail = button.getAttribute('data-user-email');
-  const userId = button.getAttribute('data-user-id');
-  const userFirstName = button.getAttribute('data-user-firstName');
-  const userLastName = button.getAttribute('data-user-lastName');
-  const userAdmin = button.getAttribute('data-user-admin');
-  formUserFirstName = document.getElementById('userFirstName');
-  formUserLastName = document.getElementById('userLastName'); 
-  formUserEmail = document.getElementById('userEmail');
-  formUserAdmin = document.getElementById('userAdmin');
-  if (userFirstName != null) {
-    formUserFirstName.value = `${userFirstName} `;
-  }  
-  if (userLastName != null) {
-    formUserLastName.value = `${userLastName} `;
-  } 
-  formUserEmail.value = `${userEmail} `;
-  formUserAdmin.value = userAdmin;
-  editUserForm.action = `/users/edit/${userId}`;
+  const id = button.getAttribute('data-user-id');
+  document.getElementById('editUserForm').action = `/users/edit/${id}`;
+
+  document.getElementById('userEmail').value =
+    button.getAttribute('data-user-email');
+  document.getElementById('userFirstName').value = button.getAttribute(
+    'data-user-first-name'
+  );
+  document.getElementById('userLastName').value = button.getAttribute(
+    'data-user-last-name'
+  );
+  const admin = button.getAttribute('data-user-admin');
+  const adminSelect = document.getElementById('userAdmin');
+  adminSelect.selectedIndex = admin;
+  console.log(admin);
+  if (admin == 1) {
+    adminSelect.disabled = true;
+    document.getElementById('adminRequired').hidden = true;
+  }
 };
 
 const validateConfirmDelete = () => {

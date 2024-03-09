@@ -67,6 +67,24 @@ const craftConfirmNewPwEmail = ({
   `;
 };
 
+const craftForeignEmailChangeEmail = ({
+  firstName,
+  lastName,
+  url,
+  actor
+}: CraftEmailInput): string => {
+  return `
+  Hallo ${firstName} ${lastName},\n
+  Der Nutzer ${actor} hat eine Änderung Ihrer Email-Adresse zu dieser Email-Adresse angefragt.\n
+  Um die Änderung Ihrer Email-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Link:\n
+  ${url}\n
+  Dieser Link ist 24 Stunden lang gültig.\n
+  Wenn Sie Ihre Email-Adresse nicht ändern möchten, ignorieren Sie bitte diese Nachricht.\n
+  Vielen Dank,
+  Das ${process.env.APP_NAME} Team
+`;
+};
+
 export const craftEmail = (input: CraftEmailInput): string => {
   switch (input.emailType) {
     case EmailType.ConfirmRegistration:
@@ -75,6 +93,8 @@ export const craftEmail = (input: CraftEmailInput): string => {
       return craftConfirmNewPwEmail(input);
     case EmailType.ConfirmNewEmail:
       return craftConfirmNewEmailEmail(input);
+    case EmailType.ForeignEmailChange:
+      return craftForeignEmailChangeEmail(input);
     default:
       throw new Error(`Unsupported email type: ${input.emailType}`);
   }

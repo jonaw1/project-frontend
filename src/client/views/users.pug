@@ -32,8 +32,8 @@ block content
                                     data-bs-target="#editUserModal", 
                                     data-user-email=usr.email, 
                                     data-user-id=usr.user_id,
-                                    data-user-firstName=usr.first_name,
-                                    data-user-lastName=usr.last_name,
+                                    data-user-first-name=usr.first_name,
+                                    data-user-last-name=usr.last_name,
                                     data-user-admin=usr.admin,
                                     onclick="openEditModal(this)"
                                 ) Ändern
@@ -93,18 +93,18 @@ block content
                         .form-group.mb-2
                             label(for="userFirstName") Vorname 
                                 span.text-danger *
-                            input#userFirstName.form-control(placeholder="Vorname", value=usr ? usr.first_name : "", name="first_name")
+                            input#userFirstName.form-control(placeholder="Vorname eingeben", value=usr ? usr.first_name : "", name="first_name", required)
                         .form-group.mb-2
                             label(for="userLastName") Nachname 
                                 span.text-danger *
-                            input#userLastName.form-control(placeholder="Nachname", value=usr ? usr.last_name : "", name="last_name")
+                            input#userLastName.form-control(placeholder="Nachname eingeben", value=usr ? usr.last_name : "", name="last_name", required)
                         .form-group.mb-2
                             label(for="userEmail") Email 
                                 span.text-danger *
-                            input#userEmail.form-control(type="email", placeholder="email", value=usr ? usr.email : "", name="email", required)
+                            input#userEmail.form-control(type="email", placeholder="Email eingeben", value=usr ? usr.email : "", name="email", required)
                         .form-group.mb-2
                             label(for="userAdmin") Rolle  
-                                span.text-danger *
+                                span#adminRequired.text-danger *
                             select#userAdmin.form-select(name="admin", required)
                                 option(value="0") Nutzer
                                 option(value="1") Administrator
