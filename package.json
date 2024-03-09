@@ -10,8 +10,7 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server/server.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "prepare": "husky install"
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
