@@ -266,32 +266,40 @@ const updateConfiguration = async (actor) => {
   };
   const response = await fetch(`/api/configuration/${taskId}`, options);
   if (!response.ok) {
-    showAlert('error', 'Fehler beim Speichern der Konfiguration!', 5);
+    showAlert('error', 'Fehler beim Speichern der Konfiguration!');
     return;
   }
-  showAlert('success', '✅ Konfiguration erfolgreich gespeichert!', 5);
+  showAlert('success', 'Konfiguration erfolgreich gespeichert!');
 };
 
-let timeOutId;
-
 const showAlert = (type, text) => {
-  const alert = document.getElementById('myAlert');
-  alert.innerHTML = text;
+  clearAlerts();
+  const header = document.getElementsByTagName('header')[0];
+  const alert = document.createElement('div');
+  alert.classList.add('alert', 'alert-dismissible', 'fade', 'show');
+  alert.setAttribute('role', 'alert');
   if (type == 'success') {
-    alert.style.borderColor = 'green';
+    alert.classList.add('alert-success');
   } else {
-    alert.style.borderColor = 'red';
+    alert.classList.add('alert-danger');
   }
-  if (timeOutId) {
-    clearTimeout(timeOutId);
+  const strong = document.createElement('strong');
+  strong.innerHTML = text;
+  alert.appendChild(strong);
+  const button = document.createElement('button');
+  button.classList.add('btn-close');
+  button.setAttribute('type', 'button');
+  button.setAttribute('data-bs-dismiss', 'alert');
+  button.setAttribute('aria-label', 'Close');
+  alert.appendChild(button);
+  header.appendChild(alert);
+};
+
+const clearAlerts = () => {
+  const alerts = document.getElementsByClassName('alert');
+  for (const alert of alerts) {
+    alert.remove();
   }
-  alert.hidden = false;
-  alert.classList.remove('start-animation');
-  alert.classList.add('start-animation');
-  timeOutId = setTimeout(() => {
-    alert.hidden = true;
-    alert.classList.remove('start-animation');
-  }, 3000);
 };
 
 const addListenersConfiguration = () => {
