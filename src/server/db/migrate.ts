@@ -124,8 +124,9 @@ if (process.env.STAGE == 'development') {
       for (const { course_id } of courses) {
         const assignmentData = [];
         for (let i = 1; i < 13; i++) {
+          const assignmentNumber = i.toString().padStart(2, '0');
           assignmentData.push({
-            assignment_name: `Übungszettel ${i}`,
+            assignment_name: `Übungszettel ${assignmentNumber}`,
             course_id
           });
         }
