@@ -136,7 +136,7 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
       extension: path.extname(file.originalname),
       path: "",
       mimetype: file.mimetype,
-      url: `file:./${file.path}`
+      url: `file:${file.path}`
     }
 
   try {
