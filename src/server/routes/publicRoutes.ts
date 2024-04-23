@@ -131,7 +131,6 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
 
   // Construct the JSON structure for the file
   const fileDetails = {
-    file: {
       id: "TestClass",
       label: "Test Class",
       extension: path.extname(file.originalname),
@@ -139,7 +138,6 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
       mimetype: file.mimetype,
       url: `file:./${file.path}`
     }
-  };
 
   try {
     const task = await db('tasks').where({ task_id }).first();
