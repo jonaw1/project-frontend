@@ -109,7 +109,10 @@ router.post('/api/run', async (req, res) => {
 // Setting up Multer to save files to disk
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Ensure this directory exists
+    // Store files in the 'uploads' directory; ensure this directory exists
+    const uploadPath = path.resolve(__dirname, 'uploads');
+    fs.mkdirSync(uploadPath, { recursive: true }); // Make sure the directory exists
+    cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -132,7 +135,7 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
       id: "TestClass",
       label: "Test Class",
       extension: path.extname(file.originalname),
-      path: file.path,
+      path: "",
       mimetype: file.mimetype,
       url: `file:./${file.path}`
     }
