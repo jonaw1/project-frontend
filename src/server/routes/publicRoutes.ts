@@ -1,6 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../db/database';
 import logger from '../shared/logger';
+import fs from 'fs';
+import multer from 'multer';
+import path from 'path';
 
 const router = Router();
 
@@ -100,6 +103,100 @@ router.post('/api/run', async (req, res) => {
       `Error while trying to run assignment <${task_id}>: ${error}`
     );
     return res.status(500).json({ error: 'Internal server error' });
+  }
+})
+
+// Setting up Multer to save files to disk
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Ensure this directory exists
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
+  const { task_id } = req.body;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  // Construct the JSON structure for the file
+  const fileDetails = {
+    file: {
+      id: "TestClass",
+      label: "Test Class",
+      extension: path.extname(file.originalname),
+      path: file.path,
+      mimetype: file.mimetype,
+      url: `file:./${file.path}`
+    }
+  };
+
+  try {
+    const task = await db('tasks').where({ task_id }).first();
+
+    if (!task) {
+      logger.error(
+        `Tried to run task <${task_id}>, but task not found`
+      );
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    const response = await (
+      await fetch(process.env.CLOUDCHECK_URL as string, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          data: {
+            feedback: [],
+            file: fileDetails,
+            attemptCount: 0,
+            showSolution: false,
+            user: null,
+            assignment: null,
+            block: null,
+            question: null,
+            checkerClass: null,
+            settings: null,
+            mass: JSON.parse(task.configuration),
+          },
+          pipeline: [
+            {
+              action: 'git',
+              options: {
+                gitUrl: 'https://github.com/qped-eu/MASS-checker.git',
+                gitBranch: 'qf'
+              }
+            }
+          ]
+        })
+      })
+    ).json();
+
+    res.status(200).json({
+      feedback: response.data.feedback
+    });
+  } catch (error) {
+    logger.error(
+      `Error while trying to run assignment <${task_id}>: ${error}`
+    );
+    return res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    // Clean up: Delete the file after processing
+    fs.unlink(file.path, err => {
+      if (err) {
+        logger.error(`Failed to delete file: ${file.path}`);
+      }
+    });
   }
 })
 
