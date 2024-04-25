@@ -1,5 +1,6 @@
 import logger from './logger';
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 
 export const logApiCall = (req: Request) => {
   logger.info(
@@ -25,4 +26,12 @@ export const tryCatchWrapper = (
         .json({ errors: [{ msg: 'Internal Server Error' }] });
     }
   };
+};
+
+export const handleErrors = (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    logger.error('Validation error', errors.array());
+    return res.status(400).json({ errors: errors.array() });
+  }
 };
