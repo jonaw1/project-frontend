@@ -1,4 +1,4 @@
-# University Project
+# project-frontend
 
 ## How to run
 - `npm i`
