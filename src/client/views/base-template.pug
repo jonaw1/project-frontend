@@ -6,67 +6,54 @@ html(lang="en")
     title #{title}
     link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65", crossorigin="anonymous")
     link(rel="stylesheet", href="css/styles.css")
+    
+    <script src="https://kit.fontawesome.com/8b60831eff.js" crossorigin="anonymous"></script>
     block head
 
-  body
+  body.d-flex.flex-column
     header
-      p#user(hidden, data-user-email=user ? user.email : null)
-      div#myAlert(hidden)
-      nav.navbar.navbar-expand-lg.mt-3.mx-4.mb-5
-        .container-fluid
-          a.navbar-brand.me-4(href="/") Home
-          button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarSupportedContent", aria-controls="navbarSupportedContent", aria-expanded="false", aria-label="Toggle navigation")
-            span.navbar-toggler-icon 
-          #navbarSupportedContent.collapse.navbar-collapse
-            ul.navbar-nav.my-auto.mb-2.mb-lg-0
-                if user
-                  li.mx-2
-                    a.nav-link(href="/courses", class=route == 'courses' ? "highlighted" : "") Meine Kurse
-                if user && user.admin
-                  li.mx-2
-                    a.nav-link(href="/users", class=route == 'users' ? "highlighted" : "") Nutzer verwalten
-                if user && user.admin 
-                  li.mx-2
-                      a.nav-link(href="/all-courses", class=route == 'all-courses' ? "highlighted" : "") Alle Kurse verwalten
-            ul.navbar-nav.ms-auto.mb-2.mb-lg-0
-              if user
-                li.mx-2
-                  button.btn.btn-primary(data-bs-toggle="modal", data-bs-target="#profileModal") Mein Profil
-                li.mx-2.d-flex.align-items-center
-                  form(action="/logout", method="post")
-                    button.btn.btn-secondary(type="submit") Abmelden
-              else
-                li.mx-2
-                  button.btn.btn-primary(onclick="location.href = '/login'") Anmelden
-                li.mx-2
-                  button.btn.btn-secondary(onclick="location.href = '/register'") Registrieren
+      p#user(hidden, data-user-email=user ? user.email : null, data-user-id=user ? user.user_id : null)
+      nav.row.my-navbar.px-5
+        .col.d-flex.justify-content-start.align-items-center.gap-5
+          if user
+            a.nav-link(href="/courses", class=route == 'courses' ? "highlighted" : "") MEINE KURSE
+          if user && user.admin 
+            a.nav-link(href="/users", class=route == 'users' ? "highlighted" : "") NUTZER VERWALTEN
+        .col.d-flex.justify-content-end.align-items-center.gap-5
+          if user
+            a.nav-link(data-bs-toggle="modal", data-bs-target="#profileModal") MEIN PROFIL
+            form(action="/logout", method="post")
+              button.nav-link.btn-no-style(type="submit") ABMELDEN
+          else
+            button.btn-no-style.nav-link(onclick="location.href = '/login'") ANNMELDEN
+            button.btn-no-style.nav-link(onclick="location.href = '/register'") REGISTRIEREN
       if success
         .alert.alert-success.alert-dismissible.fade.show(role="alert")
-          strong= success
-          button.btn-close(type="button", data-bs-dismiss="alert", aria-label="Close")
+          span= success
+          button.btn-close.btn-close-white(type="button", data-bs-dismiss="alert", aria-label="Close")
       if error
         .alert.alert-danger.alert-dismissible.fade.show(role="alert")
-          strong= error
-          button.btn-close(type="button", data-bs-dismiss="alert", aria-label="Close")
+          span= error
+          button.btn-close.btn-close-white(type="button", data-bs-dismiss="alert", aria-label="Close")
     #profileModal.modal.fade(tabindex="-1", aria-labelledby="profileLabel", aria-hidden="true")
       .modal-dialog
           .modal-content
-              .modal-header
-                  h5#profileLabel.modal-title Mein Profil
-                  button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+              .modal-header.pb-0
+                  h5#profileLabel.modal-title MEIN PROFIL
+                  button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
               form#editProfileForm(action=`/profile`, method="post")
-                .modal-body 
+                .modal-body
                   .form-group.mb-2
                       label(for="profileFirstNameInput") Vorname 
-                          span.text-danger.required-star(hidden) *
+                          span.txt-danger.required-star(hidden) *
                       input#profileFirstNameInput.form-control(type="text", placeholder="Vorname eingeben", value=user ? user.first_name : "", name="first_name", required, disabled)
                   .form-group.mb-2
                       label(for="profileLastNameInput") Nachname 
-                          span.text-danger.required-star(hidden) *
+                          span.txt-danger.required-star(hidden) *
                       input#profileLastNameInput.form-control(type="text", placeholder="Nachname eingeben", value=user ? user.last_name : "", name="last_name", required, disabled)
                   .form-group.mb-2
                       label(for="profileEmailInput") Email 
-                          span.text-danger.required-star(hidden) *
+                          span.txt-danger.required-star(hidden) *
                       input#profileEmailInput.form-control(type="email", placeholder="Email eingeben", value=user ? user.email : "", name="email", required, disabled)
                   .form-group.mb-3
                       label(for="profileRoleSelect") Rolle  
@@ -74,21 +61,25 @@ html(lang="en")
                           option(value="0", selected=user && !user.admin) Nutzer
                           option(value="1", selected=user && user.admin) Administrator
                   span.mb-2
-                    a.me-2(href="/change-pw") Passwort ändern
-                    a.text-danger.ms-auto(href="javascript:showDeleteProfile();") Profil löschen
-                .modal-footer 
-                  button#editButton.btn.btn-primary(type="button", onclick="toggleProfileForm()") Ändern
+                    a.me-2(href="javascript:showChangePw();") Passwort ändern
+                    a.txt-danger.ms-auto(href="javascript:showDeleteProfile();") Profil löschen
+                .modal-footer
+                  button#editButton.btn.btn-primary(type="button", onclick="toggleProfileForm()") Bearbeiten
                   button#submitProfileBtn.btn.btn-primary(type="submit", hidden) Speichern
                   button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
-              form#deleteProfileForm(action=`/delete-acc`, method="post", hidden)
+              form#deleteProfileForm(action=`/delete-acc`, method="post", onsubmit="return validateDeleteProfilePasswordRepeat();", hidden)
                 .modal-body 
-                  p.mb-4
-                    code.text-danger Achtung: Profil wird endgültig gelöscht. Bitte Passwort eingeben und Schalter umlegen.
-                  .form-group.mb-4
+                  p.mb-2.txt-danger Achtung: Profil wird endgültig gelöscht. Bitte Passwort eingeben und Schalter umlegen.
+                  .form-group.mb-2
                       label(for="profileEmailInput") Passwort
-                          span.text-danger  *
-                      input#deleteProfilePwInput.form-control(type="password", placeholder="Passwort eingeben", name="password", required)
-                  .row.mb-2.mx-auto
+                          span.txt-danger  *
+                      input#deleteProfilePwInput.form-control(type="password", placeholder="Passwort eingeben", name="password", onkeyup="validateDeleteProfilePasswordRepeat();", required)
+                  .form-group.mb-3
+                      label(for="profileEmailInput") Passwort wiederholen
+                          span.txt-danger  *
+                      input#deleteProfilePwRepeatInput.form-control(type="password", placeholder="Passwort eingeben", name="passwordRepeat", onkeyup="validateDeleteProfilePasswordRepeat();", required)
+                      #deleteProfilePwRepeatFeedback.small.txt-danger(hidden) Passwörter stimmen nicht überein.
+                  .row.mb-3.mx-auto
                     .col.d-flex.justify-content-center
                       .form-check.form-switch
                         input.form-check-input(type="checkbox", role="switch", required)
@@ -98,8 +89,29 @@ html(lang="en")
                     .col.d-flex.justify-content-center
                       .form-check.form-switch
                         input.form-check-input(type="checkbox", role="switch", required)
+                  span.mb-2
+                    a.me-2(href="javascript:showEditProfile();") Profil bearbeiten
+                    a.me-2(href="javascript:showChangePw();") Passwort ändern
                 .modal-footer 
-                  button#deleteProfileButton.btn.btn-primary(type="submit") Profil löschen
+                  button#deleteProfileButton.btn.btn-danger(type="submit") Profil löschen
+                  button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
+              form#changePwForm(action=`/change-pw`, method="post", onsubmit="return validateChangePw();", hidden)
+                .modal-body 
+                  .form-group.mb-2
+                      label(for="profileEmailInput") Neues Passwort
+                          span.txt-danger  *
+                      input#changePwPwInput.form-control(type="password", placeholder="Passwort eingeben", name="password", onkeyup="validateChangePw();", required)
+                      #changePwPwFeedback.small.txt-danger(hidden) Passwort muss mindestens 8 Zeichen lang sein und mindestens 1 Großbuchstaben, 1 Kleinbuchstaben und 1 Zahl beinhalten.
+                  .form-group.mb-3
+                      label(for="profileEmailInput") Neues Passwort wiederholen
+                          span.txt-danger  *
+                      input#changePwPwRepeatInput.form-control(type="password", placeholder="Passwort eingeben", name="passwordRepeat", onkeyup="validateChangePw();", required)
+                      #changePwPwRepeatFeedback.small.txt-danger(hidden) Passwörter stimmen nicht überein.
+                  span.mb-2
+                    a.me-2(href="javascript:showEditProfile();") Profil bearbeiten
+                    a.txt-danger.ms-auto(href="javascript:showDeleteProfile();") Profil löschen
+                .modal-footer 
+                  button.btn.btn-primary(type="submit") Passwort ändern
                   button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
 
     block content

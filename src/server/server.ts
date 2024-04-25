@@ -88,11 +88,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction): void => {
   next();
 });
 
-// Re-route to home
-app.use((req: Request, res: Response) => {
-  return res.redirect('/');
-});
-
 startDatabase({ reset: false }).then(() => {
   app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
