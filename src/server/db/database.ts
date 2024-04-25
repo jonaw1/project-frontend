@@ -22,7 +22,7 @@ export const startDatabase = async (
   if (!!input.reset && process.env.STAGE == 'development') {
     try {
       const tablesResult: MasterTable[] = await db.raw(
-        'SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%" AND name != "sessions"'
+        'SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"'
       );
       const tableNames = tablesResult.map((table) => table.name);
       await Promise.all(

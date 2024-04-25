@@ -2,6 +2,7 @@ import { Knex } from 'knex';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import logger from '../shared/logger';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -98,6 +99,22 @@ type Assignment = {
 };
 
 if (process.env.STAGE == 'development') {
+  migrations.push([
+    'addDevUser',
+    async (db: Knex) => {
+      await db
+        .insert({
+          first_name: 'admin',
+          last_name: 'admin',
+          email: 'admin@admin.com',
+          admin: 1,
+          active: 1,
+          password: await bcrypt.hash('123', 10)
+        })
+        .into('users');
+    }
+  ]);
+
   let configuration: string;
   try {
     configuration = fs.readFileSync(
@@ -111,14 +128,13 @@ if (process.env.STAGE == 'development') {
     'addDummyData',
     async (db: Knex) => {
       const user = await db('users')
-        .where({ email: process.env.ROOT_USER_EMAIL })
+        .where({ email: 'admin@admin.com' })
         .first();
       const user_id = user.user_id;
       const courseData = [
         { course_name: 'Objektorientierte Programmierung', user_id },
         { course_name: 'Softwaretechnik', user_id },
-        { course_name: 'Algorithmen & Datenstrukturen', user_id },
-        { course_name: 'Testkurs', user_id: 2 }
+        { course_name: 'Algorithmen & Datenstrukturen', user_id }
       ];
       const courses = await db('courses')
         .insert(courseData)
