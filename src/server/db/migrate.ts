@@ -98,9 +98,12 @@ type Assignment = {
 };
 
 if (process.env.STAGE == 'development') {
-  let configuration: string = '';
+  let configuration: string;
   try {
-    configuration = fs.readFileSync('src/server/db/configuration.json', 'utf8');
+    configuration = fs.readFileSync(
+      'src/server/db/sample-configuration.json',
+      'utf8'
+    );
   } catch (error) {
     logger.error('Error reading dummy file');
   }
@@ -150,6 +153,21 @@ if (process.env.STAGE == 'development') {
   ]);
 }
 
+migrations.push([
+  'addDeletedFlags',
+  async (db: Knex) => {
+    await db.schema.alterTable('courses', (table) => {
+      table.boolean('deleted').defaultTo(false).notNullable();
+    });
+    await db.schema.alterTable('assignments', (table) => {
+      table.boolean('deleted').defaultTo(false).notNullable();
+    });
+    await db.schema.alterTable('tasks', (table) => {
+      table.boolean('deleted').defaultTo(false).notNullable();
+    });
+  }
+]);
+
 // Create new `migrations.push() for each new migration`
 
 export const migrate = async (db: Knex) => {
@@ -167,6 +185,7 @@ export const migrate = async (db: Knex) => {
     if (!exists) {
       await migrationFunc(db);
       await db('migrations').insert({ migration_id: migrationId });
+      logger.info(`Applied migration: ${migrationId}`);
     }
   }
 };

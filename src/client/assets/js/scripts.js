@@ -16,15 +16,32 @@ const resetFormOnDismissProfileModal = () => {
   const profileForm = document.getElementById('editProfileForm');
   const profileLabel = document.getElementById('profileLabel');
   const deleteProfileForm = document.getElementById('deleteProfileForm');
+  const changePwForm = document.getElementById('changePwForm');
   profileModal.addEventListener('hidden.bs.modal', () => {
     const disabled = document.getElementById('profileFirstNameInput').disabled;
-    profileForm.style.display = 'block';
-    deleteProfileForm.hidden = true;
-    deleteProfileForm.reset();
-    profileLabel.innerHTML = 'Mein Profil';
-    profileForm.reset();
     if (!disabled) {
       toggleProfileForm();
+    }
+    profileLabel.innerHTML = 'MEIN PROFIL';
+    deleteProfileForm.reset();
+    changePwForm.reset();
+    profileForm.reset();
+    profileForm.hidden = false;
+    deleteProfileForm.hidden = true;
+    changePwForm.hidden = true;
+    const deleteProfilePwRepeatFeedback = document.getElementById(
+      'deleteProfilePwRepeatFeedback'
+    );
+    const changePwPwFeedback = document.getElementById('changePwPwFeedback');
+    const changePwPwRepeatFeedback = document.getElementById(
+      'changePwPwRepeatFeedback'
+    );
+    deleteProfilePwRepeatFeedback.hidden = true;
+    changePwPwFeedback.hidden = true;
+    changePwPwRepeatFeedback.hidden = true;
+    const inputs = profileModal.getElementsByTagName('input');
+    for (const input of inputs) {
+      input.classList.remove('invalid-border');
     }
   });
 };
@@ -45,6 +62,71 @@ const resetFormOnDismissDeleteModal = () => {
     deleteConfirmInvalidFeedback.style.display = 'none';
     deleteUserForm.reset();
   });
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const validateDeleteProfilePasswordRepeat = () => {
+  const deleteProfilePw = document.getElementById('deleteProfilePwInput').value;
+  const deleteProfilePwRepeatInput = document.getElementById(
+    'deleteProfilePwRepeatInput'
+  );
+  const deleteProfilePwRepeat = deleteProfilePwRepeatInput.value;
+  const deleteProfilePwRepeatFeedback = document.getElementById(
+    'deleteProfilePwRepeatFeedback'
+  );
+  if (deleteProfilePwRepeat.length === 0) {
+    return false;
+  }
+  if (deleteProfilePw !== deleteProfilePwRepeat) {
+    deleteProfilePwRepeatFeedback.hidden = false;
+    deleteProfilePwRepeatInput.classList.add('invalid-border');
+    return false;
+  } else {
+    deleteProfilePwRepeatFeedback.hidden = true;
+    deleteProfilePwRepeatInput.classList.remove('invalid-border');
+    return true;
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const validateChangePw = () => {
+  const changePwPwInput = document.getElementById('changePwPwInput');
+  const changePwPwFeedback = document.getElementById('changePwPwFeedback');
+  const changePwPwRepeatInput = document.getElementById(
+    'changePwPwRepeatInput'
+  );
+  const pw1 = changePwPwInput.value;
+  const pw2 = changePwPwRepeatInput.value;
+  const changePwPwRepeatFeedback = document.getElementById(
+    'changePwPwRepeatFeedback'
+  );
+  let returnVal = true;
+  if (
+    pw1.length > 0 &&
+    (pw1.length < 8 ||
+      !/[A-Z]/.test(pw1) ||
+      !/[a-z]/.test(pw1) ||
+      !/\d/.test(pw1))
+  ) {
+    changePwPwFeedback.hidden = false;
+    changePwPwInput.classList.add('invalid-border');
+    returnVal = false;
+  } else {
+    changePwPwFeedback.hidden = true;
+    changePwPwInput.classList.remove('invalid-border');
+  }
+  if (pw2.length === 0) {
+    return false;
+  }
+  if (pw1 !== pw2) {
+    changePwPwRepeatFeedback.hidden = false;
+    changePwPwRepeatInput.classList.add('invalid-border');
+    return false;
+  } else {
+    changePwPwRepeatFeedback.hidden = true;
+    changePwPwRepeatInput.classList.remove('invalid-border');
+    return returnVal;
+  }
 };
 
 const validateRegister = () => {
@@ -143,11 +225,46 @@ const openEditModal = (button) => {
   const admin = button.getAttribute('data-user-admin');
   const adminSelect = document.getElementById('userAdmin');
   adminSelect.selectedIndex = admin;
-  console.log(admin);
   if (admin == 1) {
     adminSelect.disabled = true;
     document.getElementById('adminRequired').hidden = true;
   }
+};
+
+const addListenerDeleteElementModal = () => {
+  const deleteElementModal = document.getElementById('deleteElementModal');
+  deleteElementModal.addEventListener('show.bs.modal', (event) => {
+    const selectedArray = document.getElementsByClassName('selected');
+    if (selectedArray.length === 0) {
+      event.preventDefault();
+      return;
+    }
+    const selected = selectedArray[0];
+    let name;
+    if (selected.id.startsWith('course-')) {
+      name = selected.getAttribute('data-course-name');
+    } else if (selected.id.startsWith('assignment-')) {
+      name =
+        selected.getAttribute('data-course-name') +
+        ' > ' +
+        selected.getAttribute('data-assignment-name');
+    } else {
+      name =
+        selected.getAttribute('data-course-name') +
+        ' > ' +
+        selected.getAttribute('data-assignment-name') +
+        ' > ' +
+        selected.getAttribute('data-task-name');
+    }
+    const deleteElementText = document.getElementById('deleteElementText');
+    deleteElementText.innerHTML =
+      'Bitte bestätigen Sie, dass Sie ' +
+      `<strong>${name}</strong>` +
+      (selected.id.startsWith('task-')
+        ? ''
+        : ' sowie alle untergeordneten Elemente') +
+      ' löschen möchten.';
+  });
 };
 
 const validateConfirmDelete = () => {
@@ -184,54 +301,128 @@ const validateConfirmDelete = () => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const showDeleteProfile = () => {
   const profileLabel = document.getElementById('profileLabel');
-  profileLabel.innerHTML = 'Profil löschen';
+  profileLabel.innerHTML = 'PROFIL LÖSCHEN';
   const editProfileForm = document.getElementById('editProfileForm');
-  editProfileForm.style.display = 'none';
+  editProfileForm.hidden = true;
+  const changePwForm = document.getElementById('changePwForm');
+  changePwForm.hidden = true;
   const deleteProfileForm = document.getElementById('deleteProfileForm');
+  deleteProfileForm.hidden = false;
+  const deleteProfilePwInput = document.getElementById('deleteProfilePwInput');
+  deleteProfilePwInput.focus();
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const showEditProfile = () => {
+  const profileLabel = document.getElementById('profileLabel');
+  profileLabel.innerHTML = 'MEIN PROFIL';
+  const editProfileForm = document.getElementById('deleteProfileForm');
+  editProfileForm.hidden = true;
+  const changePwForm = document.getElementById('changePwForm');
+  changePwForm.hidden = true;
+  const deleteProfileForm = document.getElementById('editProfileForm');
   deleteProfileForm.hidden = false;
 };
 
-const addListenersSelectable = () => {
-  const selectables = document.getElementsByClassName('selectable');
-  if (selectables.length == 0) {
-    return;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const showChangePw = () => {
+  const profileLabel = document.getElementById('profileLabel');
+  profileLabel.innerHTML = 'PASSWORT ÄNDERN';
+  const editProfileForm = document.getElementById('editProfileForm');
+  const deleteProfileForm = document.getElementById('deleteProfileForm');
+  editProfileForm.hidden = true;
+  deleteProfileForm.hidden = true;
+  const changePwForm = document.getElementById('changePwForm');
+  changePwForm.hidden = false;
+  const changePwPwInput = document.getElementById('changePwPwInput');
+  changePwPwInput.focus();
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const onClickSelectable = async (selectable) => {
+  // toggle angle icon
+  const i = selectable.getElementsByTagName('i')[0];
+  const isAngleRight = i.classList.contains('fa-angle-right');
+  if (!i.classList.contains('fa-file-lines')) {
+    i.setAttribute(
+      'class',
+      `fa-solid fa-angle-${isAngleRight ? 'down' : 'right'}`
+    );
   }
-  for (const selectable of selectables) {
-    selectable.addEventListener('click', async () => {
-      if (selectable.classList.contains('selected')) {
-        selectable.classList.remove('selected');
-        selectable.classList.add('selectable-hover');
-        if (selectable.id.startsWith('task-')) {
-        } else {
-          document.getElementById(selectable.id + '-toggle').hidden = true;
-        }
-      } else {
-        selectable.classList.add('selected');
-        selectable.classList.remove('selectable-hover');
-        if (selectable.id.startsWith('task-')) {
-          const tasks = document.getElementsByClassName('task');
-          for (const task of tasks) {
-            if (task != selectable) {
-              task.classList.remove('selected');
-              task.classList.add('selectable-hover');
-            }
-          }
-          const taskConfiguration = await fetchTaskConfiguration(
-            selectable.getAttribute('data-task-id')
-          );
-          const config = document.getElementById('configuration');
-          config.value = taskConfiguration;
-          config.scrollTo(0, 0);
-          checkValidJSON();
-        } else {
-          document.getElementById(selectable.id + '-toggle').hidden = false;
-        }
+  // expand content
+  if (selectable.id.startsWith('course')) {
+    const courseId = selectable.getAttribute('data-course-id');
+    const treeViewForCourse = document.getElementById(
+      `treeViewCourse${courseId}`
+    );
+    if (treeViewForCourse) {
+      treeViewForCourse.hidden = !treeViewForCourse.hidden;
+    }
+  }
+
+  if (selectable.id.startsWith('assignment')) {
+    const assigmentId = selectable.getAttribute('data-assignment-id');
+    const treeViewForAssignment = document.getElementById(
+      `treeViewAssignment${assigmentId}`
+    );
+    if (treeViewForAssignment) {
+      treeViewForAssignment.hidden = !treeViewForAssignment.hidden;
+    }
+  }
+
+  if (!selectable.classList.contains('selected')) {
+    // add selected overlay
+    selectable.classList.add('selected');
+    selectable.classList.remove('selectable-hover');
+    // unselect previously selected element
+    const selectedElements = document.getElementsByClassName('selected');
+    for (const selectedElement of selectedElements) {
+      if (selectedElement != selectable) {
+        selectedElement.classList.remove('selected');
+        selectedElement.classList.add('selectable-hover');
       }
-    });
+    }
+
+    if (selectable.id.startsWith('task')) {
+      // fetch configuration
+      const taskConfiguration = await fetchTaskConfiguration(
+        selectable.getAttribute('data-task-id')
+      );
+      const config = document.getElementById('configuration');
+      config.value = taskConfiguration;
+      config.scrollTo(0, 0);
+      checkValidJSON();
+
+      document.getElementById('pathCourseName').innerHTML =
+        selectable.getAttribute('data-course-name');
+      document
+        .getElementById('selectedCourseId')
+        .setAttribute(
+          'data-course-id',
+          selectable.getAttribute('data-course-id')
+        );
+      document.getElementById('pathAssignmentName').innerHTML =
+        selectable.getAttribute('data-assignment-name');
+      document
+        .getElementById('selectedAssignmentId')
+        .setAttribute(
+          'data-assignment-id',
+          selectable.getAttribute('data-assignment-id')
+        );
+      document.getElementById('pathTaskName').innerHTML =
+        selectable.getAttribute('data-task-name');
+      document
+        .getElementById('selectedTaskId')
+        .setAttribute('data-task-id', selectable.getAttribute('data-task-id'));
+
+      document.getElementById('configContent').hidden = false;
+    }
   }
 };
 
 const fetchTaskConfiguration = async (taskId) => {
+  const configuration = document.getElementById('configuration');
+  configuration.classList.remove('invalid-border');
   const actor = document.getElementById('user').getAttribute('data-user-email');
   try {
     const response = await fetch(`/api/configuration/${taskId}`, {
@@ -250,18 +441,23 @@ const fetchTaskConfiguration = async (taskId) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const updateConfiguration = async (actor) => {
   const configuration = document.getElementById('configuration').value;
-  const task = document.getElementsByClassName('selected task')[0];
-  if (!task) {
+  if (!isValidJSON(configuration)) {
+    showAlert('error', 'Kein gültiges JSON-Format!');
     return;
   }
-  const taskId = task.getAttribute('data-task-id');
+  const taskId = document
+    .getElementById('selectedTaskId')
+    .getAttribute('data-task-id');
+  if (!taskId) {
+    return;
+  }
   const headers = {
     actor,
     'Content-Type': 'application/json'
   };
   const options = {
     method: 'PUT',
-    headers,
+    headers: headers,
     body: JSON.stringify({ configuration })
   };
   const response = await fetch(`/api/configuration/${taskId}`, options);
@@ -283,11 +479,12 @@ const showAlert = (type, text) => {
   } else {
     alert.classList.add('alert-danger');
   }
-  const strong = document.createElement('strong');
-  strong.innerHTML = text;
-  alert.appendChild(strong);
+  const span = document.createElement('span');
+  span.innerHTML = text;
+  alert.appendChild(span);
   const button = document.createElement('button');
   button.classList.add('btn-close');
+  button.classList.add('btn-close-white');
   button.setAttribute('type', 'button');
   button.setAttribute('data-bs-dismiss', 'alert');
   button.setAttribute('aria-label', 'Close');
@@ -302,31 +499,17 @@ const clearAlerts = () => {
   }
 };
 
-const addListenersConfiguration = () => {
-  const configurationTextArea = document.getElementById('configuration');
-  if (!configurationTextArea) {
-    return;
-  }
-  configurationTextArea.addEventListener('keyup', () => {
-    checkValidJSON();
-  });
-};
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkValidJSON = () => {
   const configurationTextArea = document.getElementById('configuration');
   const configuration = configurationTextArea.value;
-  const saveBtn = document.getElementById('saveConfigBtn');
   if (!isValidJSON(configuration)) {
-    configurationTextArea.classList.add('is-invalid');
-    configurationTextArea.classList.remove('blue-border');
-    saveBtn.disabled = true;
-    document.getElementById('invalidJsonText').hidden = false;
-    return;
+    console.log('INVALID');
+    configurationTextArea.classList.add('invalid-border');
+  } else {
+    console.log('VALID');
+    configurationTextArea.classList.remove('invalid-border');
   }
-  configurationTextArea.classList.remove('is-invalid');
-  configurationTextArea.classList.add('blue-border');
-  saveBtn.disabled = false;
-  document.getElementById('invalidJsonText').hidden = true;
 };
 
 const isValidJSON = (s) => {
@@ -338,7 +521,89 @@ const isValidJSON = (s) => {
   return true;
 };
 
-addListenersConfiguration();
-addListenersSelectable();
-validateRegister();
-resetFormOnDismissProfileModal();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const submitForm = async (mode) => {
+  const form = document.getElementById('addNewModalForm');
+  switch (mode) {
+    case 'add-course':
+      form.action = '/add-courses';
+      form.method = 'post';
+      break;
+    default:
+      break;
+  }
+  if (form.checkValidity()) {
+    form.submit();
+  } else {
+    form.reportValidity();
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const inputOnFocusOut = (input) => {
+  input.parentElement.parentElement.remove();
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const createCourseComponent = () => {
+  return;
+};
+
+const newCourseFormSubmit = async (event) => {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+
+  const user = document.getElementById('user');
+  const userId = user.getAttribute('data-user-id');
+  const actor = user.getAttribute('data-user-email');
+  const formDataObject = {
+    courseName: formData.get('courseName'),
+    userId,
+    actor
+  };
+  const url = '/api/courses';
+  const response = await fetch(url, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    body: JSON.stringify(formDataObject)
+  });
+  if (response.status == 201) {
+    showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
+  } else {
+    showAlert('error', 'Fehler beim Erstellen des Kurses!');
+  }
+  form.parentElement.remove();
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const addNewCourse = () => {
+  const coursesTreeView = document.getElementById('coursesTreeView');
+  const div = document.createElement('div');
+  div.setAttribute('class', 'd-flex align-items-center p-025rem');
+  const span = document.createElement('span');
+  span.innerHTML = '&gt;&nbsp;';
+  const form = document.createElement('form');
+  form.setAttribute('class', 'flex-fill');
+  form.addEventListener('submit', (event) => newCourseFormSubmit(event));
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('class', 'form-control');
+  input.setAttribute('onfocusout', 'inputOnFocusOut(this);');
+  input.setAttribute('required', 'true');
+  input.setAttribute('name', 'courseName');
+  form.appendChild(input);
+  div.appendChild(span);
+  div.appendChild(form);
+  coursesTreeView.insertBefore(div, coursesTreeView.firstChild);
+  input.focus();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  validateRegister();
+  resetFormOnDismissProfileModal();
+  addListenerDeleteElementModal();
+});

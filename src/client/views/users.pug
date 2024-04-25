@@ -3,7 +3,7 @@ extends base-template.pug
 block content 
     .container
         button.btn.btn-primary.mb-3(data-bs-toggle="modal", data-bs-target="#addUserModal") Nutzer hinzufügen
-        table.table
+        table.table.text-light
             thead
                 tr 
                     th(scope="col") ID 
@@ -22,9 +22,9 @@ block content
                         td.align-middle #{usr.email}
                         td.align-middle= usr.admin ? "Administrator" : "Nutzer"
                         if usr.active 
-                            td.align-middle.text-success Aktiviert 
+                            td.align-middle.txt-primary Aktiviert
                         else 
-                            td.align-middle.text-danger Inaktiv
+                            td.align-middle.txt-danger Inaktiv
                         td.align-middle 
                             span 
                                 button.btn.btn-sm.btn-secondary.me-2(
@@ -49,16 +49,16 @@ block content
             .modal-content
                 .modal-header
                     h5#addUserLabel.modal-title Nutzer hinzufügen
-                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                    button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
                 form(action="/users", method="post")
                     .modal-body
                         .form-group.mb-2
                             label(for="emailInput") Email 
-                                span.text-danger *
+                                span.txt-danger *
                             input#emailInput.form-control(type="email", placeholder="Email eingeben", name="email", required)
                         .form-group.mb-2
                             label(for="roleSelect") Rolle  
-                                span.text-danger *
+                                span.txt-danger *
                             select#roleSelect.form-select(name="admin", required)
                                 option(selected, value="0") Nutzer
                                 option(value="1") Administrator
@@ -70,15 +70,15 @@ block content
             .modal-content
                 .modal-header
                     h5#deleteUserLabel.modal-title Nutzer löschen
-                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                    button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
                 form#deleteUserForm(action="", method="post")
                     .modal-body
                         label(for="deleteConfirmInput").mb-2 Bitte bestätigen Sie das Löschen des Nutzers, indem Sie die Email-Adresse 
                             span#deleteUserEmail.fw-bold 
                             span eingeben 
-                            span.text-danger *
+                            span.txt-danger *
                         input#deleteConfirmInput.form-control(type="email", placeholder="Email eingeben", required, name="email")
-                        #deleteConfirmInvalidFeedback.small.text-danger.invalid-feedb Email stimmt nicht überein.
+                        #deleteConfirmInvalidFeedback.small.txt-danger.invalid-feedb Email stimmt nicht überein.
                     .modal-footer
                         button.btn.btn-danger(type="submit") Löschen
                         button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Schließen
@@ -87,24 +87,24 @@ block content
             .modal-content
                 .modal-header
                     h5#editUserLabel.modal-title Nutzer ändern
-                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                    button.btn-close.btn-close-white(type="button", data-bs-dismiss="modal", aria-label="Close")
                 form#editUserForm(action="", method="post")
                     .modal-body
                         .form-group.mb-2
                             label(for="userFirstName") Vorname 
-                                span.text-danger *
+                                span.txt-danger *
                             input#userFirstName.form-control(placeholder="Vorname eingeben", value=usr ? usr.first_name : "", name="first_name", required)
                         .form-group.mb-2
                             label(for="userLastName") Nachname 
-                                span.text-danger *
+                                span.txt-danger *
                             input#userLastName.form-control(placeholder="Nachname eingeben", value=usr ? usr.last_name : "", name="last_name", required)
                         .form-group.mb-2
                             label(for="userEmail") Email 
-                                span.text-danger *
+                                span.txt-danger *
                             input#userEmail.form-control(type="email", placeholder="Email eingeben", value=usr ? usr.email : "", name="email", required)
                         .form-group.mb-2
                             label(for="userAdmin") Rolle  
-                                span#adminRequired.text-danger *
+                                span#adminRequired.txt-danger *
                             select#userAdmin.form-select(name="admin", required)
                                 option(value="0") Nutzer
                                 option(value="1") Administrator

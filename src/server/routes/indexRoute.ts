@@ -29,7 +29,7 @@ router.get('/', (req: Request, res: Response) => {
   if (!!user_id) {
     return res.redirect('/courses');
   }
-  return res.render('index');
+  return res.redirect('login');
 });
 
 router.get(
@@ -106,7 +106,7 @@ router.get(
       .first();
     logger.info(`Email change of <${user.email}> confirmed`);
     req.flash('success', 'Email wurde erfolgreich geändert!');
-    return res.redirect('/');
+    return res.redirect('/courses');
   }
 );
 
@@ -196,14 +196,6 @@ router.post(
   }
 );
 
-router.get(
-  '/change-pw',
-  requireAuthenticated,
-  (req: Request, res: Response) => {
-    return res.render('change-pw');
-  }
-);
-
 router.post(
   '/change-pw',
   requireAuthenticated,
@@ -212,7 +204,7 @@ router.post(
     if (!req.session.user) {
       logger.error('Requested change of password, but no user logged in');
       req.flash('error', 'Angemeldeter Nutzer konnte nicht gefunden werden!');
-      return res.redirect('change-pw');
+      return res.redirect('back');
     }
     const { user_id, first_name, last_name, email } = req.session.user;
     const encryptedPassword = req.session.user.password;
@@ -223,7 +215,7 @@ router.post(
         `User <${email}> tried to change password, but passwords didn't match`
       );
       req.flash('error', 'Passwörter stimmen nicht überein!');
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     }
 
     //Password requires min 8 characters and atleast one number, lower case letter and upper case letter
@@ -238,7 +230,7 @@ router.post(
         'error',
         'Das Passwort muss mindestens 8 Zeichen lang sein und eine Zahl, einen Kleinbuchstaben und einen Großbuchstaben enthalten!'
       );
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     }
 
     if (await bcrypt.compare(password, encryptedPassword)) {
@@ -249,7 +241,7 @@ router.post(
         'error',
         'Das neue Passwort muss sich vom vorherigen Passwort unterscheiden!'
       );
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     }
 
     const encryptedPw = await bcrypt.hash(password, 10);
@@ -284,7 +276,7 @@ router.post(
         'success',
         'Email zum Ändern des Passworts wurde versendet. Bitte bestätigen Sie den darin enthaltenen Link'
       );
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     } catch (error) {
       logger.error(
         `Error sending email while user <${email}> requested password change:`,
@@ -294,7 +286,7 @@ router.post(
         'error',
         'Fehler beim Senden der Bestätigungsemail, bitte Administrator kontaktieren!'
       );
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     }
   }
 );
@@ -310,7 +302,7 @@ router.get(
     if (!user) {
       logger.info('Invalid confirm change password link');
       req.flash('error', 'Link zum Ändern des Passworts existiert nicht!');
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     }
 
     if (user.change_pw_token_expires_at < new Date()) {
@@ -321,7 +313,7 @@ router.get(
         'error',
         'Link zum Ändern des Passworts abgelaufen, bitte neues Passwort erstellen!'
       );
-      return res.redirect('/change-pw');
+      return res.redirect('back');
     }
 
     if (user.user_id != sessionUser?.user_id) {
@@ -343,7 +335,7 @@ router.get(
       .first();
     logger.info(`Password change of <${user.email}> confirmed`);
     req.flash('success', 'Passwort wurde erfolgreich geändert!');
-    return res.redirect('/change-pw');
+    return res.redirect('back');
   }
 );
 

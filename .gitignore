@@ -2,4 +2,3 @@ node_modules/
 .env
 src/server/db/database.sqlite
 **/.DS_Store
-.gitignore
