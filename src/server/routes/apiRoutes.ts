@@ -1,13 +1,19 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../db/database';
 import logger from '../shared/logger';
-import { body } from 'express-validator';
-import { createCourse } from '../controllers/coursesController';
+import { body, param } from 'express-validator';
+import {
+  createCourse,
+  updateCourse,
+  deleteCourse
+} from '../controllers/coursesController';
+import { handleErrors, logApiCall } from '../shared/apiUtils';
 
 const router = Router();
 
 router.get(
   '/api/configuration/:task_id',
+  logApiCall,
   async (req: Request, res: Response) => {
     try {
       const { task_id } = req.params;
@@ -42,6 +48,7 @@ router.get(
 
 router.put(
   '/api/configuration/:task_id',
+  logApiCall,
   async (req: Request, res: Response) => {
     try {
       const { task_id } = req.params;
@@ -89,29 +96,64 @@ router.put(
   }
 );
 
+const validateActor = () =>
+  body('actor')
+    .notEmpty()
+    .withMessage('Actor is required')
+    .trim()
+    .isString()
+    .withMessage('Actor must be a string');
+const validateCourseName = () =>
+  body('courseName')
+    .notEmpty()
+    .withMessage('Course name is required')
+    .trim()
+    .isString()
+    .withMessage('Course name must be a string');
+const validateUserId = () =>
+  body('userId')
+    .notEmpty()
+    .withMessage('User ID is required')
+    .trim()
+    .isNumeric()
+    .withMessage('User ID must be numeric');
+const validateCourseId = () =>
+  param('courseId')
+    .notEmpty()
+    .withMessage('Course ID is required')
+    .trim()
+    .isNumeric()
+    .withMessage('Course ID must be numeric');
+
 router.post(
   '/api/courses',
   [
-    body('actor')
-      .notEmpty()
-      .withMessage('Actor is required')
-      .trim()
-      .isString()
-      .withMessage('Actor must be a string'),
-    body('courseName')
-      .notEmpty()
-      .withMessage('Course name is required')
-      .trim()
-      .isString()
-      .withMessage('Course name must be a string'),
-    body('userId')
-      .notEmpty()
-      .withMessage('User ID is required')
-      .trim()
-      .isNumeric()
-      .withMessage('User ID must be numeric')
+    logApiCall,
+    validateActor(),
+    validateCourseName(),
+    validateUserId(),
+    handleErrors
   ],
   createCourse
+);
+
+router.put(
+  '/api/courses/delete/:courseId',
+  [logApiCall, validateCourseId(), validateActor(), handleErrors],
+  deleteCourse
+);
+
+router.put(
+  '/api/courses/:courseId',
+  [
+    logApiCall,
+    validateCourseId(),
+    validateActor(),
+    validateCourseName(),
+    validateUserId(),
+    handleErrors
+  ],
+  updateCourse
 );
 
 export default router;
