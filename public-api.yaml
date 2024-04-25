@@ -32,6 +32,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RunResponse'
+  /run/advanced:
+    post:
+      summary: Executes operations using a specified configuration file and returns feedback.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                task_id:
+                  type: integer
+                  description: Task ID
+                file:
+                  type: string
+                  format: binary
+                  description: ZIP file containing task files
+      responses:
+        200:
+          description: Successful operation, feedback is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunResponse'
   /tasks:
     get:
       summary: List all available tasks.
