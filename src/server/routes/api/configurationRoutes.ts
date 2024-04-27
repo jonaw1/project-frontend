@@ -1,13 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { db } from '../db/database';
-import logger from '../shared/logger';
-import { body, param } from 'express-validator';
-import {
-  createCourse,
-  updateCourse,
-  deleteCourse
-} from '../controllers/coursesController';
-import { handleErrors, logApiCall } from '../shared/apiUtils';
+import { logApiCall } from '../../shared/apiUtils';
+import logger from '../../shared/logger';
+import { db } from '../../db/database';
 
 const router = Router();
 
@@ -94,66 +88,6 @@ router.put(
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
-);
-
-const validateActor = () =>
-  body('actor')
-    .notEmpty()
-    .withMessage('Actor is required')
-    .trim()
-    .isString()
-    .withMessage('Actor must be a string');
-const validateCourseName = () =>
-  body('courseName')
-    .notEmpty()
-    .withMessage('Course name is required')
-    .trim()
-    .isString()
-    .withMessage('Course name must be a string');
-const validateUserId = () =>
-  body('userId')
-    .notEmpty()
-    .withMessage('User ID is required')
-    .trim()
-    .isNumeric()
-    .withMessage('User ID must be numeric');
-const validateCourseId = () =>
-  param('courseId')
-    .notEmpty()
-    .withMessage('Course ID is required')
-    .trim()
-    .isNumeric()
-    .withMessage('Course ID must be numeric');
-
-router.post(
-  '/api/courses',
-  [
-    logApiCall,
-    validateActor(),
-    validateCourseName(),
-    validateUserId(),
-    handleErrors
-  ],
-  createCourse
-);
-
-router.put(
-  '/api/courses/delete/:courseId',
-  [logApiCall, validateCourseId(), validateActor(), handleErrors],
-  deleteCourse
-);
-
-router.put(
-  '/api/courses/:courseId',
-  [
-    logApiCall,
-    validateCourseId(),
-    validateActor(),
-    validateCourseName(),
-    validateUserId(),
-    handleErrors
-  ],
-  updateCourse
 );
 
 export default router;

@@ -6,7 +6,7 @@ servers:
   - url: '{server}/api'
     variables:
       server:
-        default: https://localhost:3000  # development server
+        default: https://localhost:3000 # development server
 paths:
   /run:
     post:

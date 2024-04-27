@@ -91,7 +91,6 @@ export const updateCourse = tryCatchWrapper(
     await validateActor(actor, res);
     await validateUserId(user_id, res);
     await validateCourseName(course_name, user_id, res);
-    
 
     const couldntFindCourseForUser =
       (await db('courses')
@@ -111,9 +110,7 @@ export const updateCourse = tryCatchWrapper(
       });
     }
 
-    await db('courses')
-      .update({ course_name })
-      .where({ course_id });
+    await db('courses').update({ course_name }).where({ course_id });
     return res
       .status(200)
       .json({ success: true, message: 'Course name successfully updated' });
@@ -127,9 +124,7 @@ export const deleteCourse = tryCatchWrapper(
     await validateCourseId(course_id, res);
     await validateActor(actor, res);
 
-    await db('courses')
-      .update({ deleted: true })
-      .where({ course_id });
+    await db('courses').update({ deleted: true }).where({ course_id });
     return res
       .status(200)
       .json({ success: true, message: 'Course successfully deleted' });

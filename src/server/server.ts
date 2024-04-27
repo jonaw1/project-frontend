@@ -4,7 +4,9 @@ import path from 'path';
 import indexRoute from './routes/indexRoute';
 import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRoutes';
-import apiRoutes from './routes/apiRoutes';
+import configurationRoutes from './routes/api/configurationRoutes';
+import courseRoutes from './routes/api/courseRoutes';
+import taskRoutes from './routes/api/taskRoutes';
 import session from 'express-session';
 import { startDatabase } from './db/database';
 import KnexSessionStore, { StoreFactory } from 'connect-session-knex';
@@ -75,7 +77,9 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use('/', apiRoutes);
+app.use('/', configurationRoutes);
+app.use('/', courseRoutes);
+app.use('/', taskRoutes);
 app.use('/', indexRoute);
 app.use('/', authRoutes);
 app.use('/', adminRoutes);
