@@ -256,7 +256,7 @@ const createNewCourse = () => {
   const input = document.createElement('input');
   input.setAttribute('type', 'text');
   input.setAttribute('class', 'form-control p-0 m-0 rounded-0 h-100');
-  input.setAttribute('onfocusout', 'removeDummy(event);');
+  input.setAttribute('onfocusout', 'removeDummy();');
   input.setAttribute('required', 'true');
   input.setAttribute('name', 'course_name');
   form.appendChild(input);
@@ -686,12 +686,7 @@ const submitForm = async (mode) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const removeDummy = (event) => {
-  const formSubmitted =
-    event.relatedTarget && event.relatedTarget.type === 'submit';
-  if (formSubmitted) {
-    return;
-  }
+const removeDummy = () => {
   const dummy = document.getElementById('dummy');
   if (!!dummy) {
     dummy.remove();
@@ -742,11 +737,10 @@ const newCourseFormSubmit = async (event) => {
       method: 'POST',
       body: JSON.stringify(formDataObject)
     });
+    const data = await response.json();
     if (response.status == 201) {
-      response.json().then((data) => {
-        completeCourseElement(data.course_id, courseName);
-        showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
-      });
+      completeCourseElement(data.course_id, courseName);
+      showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
     } else {
       removeDummy();
       showAlert('error', 'Fehler beim Erstellen des Kurses!');
