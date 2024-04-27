@@ -231,6 +231,60 @@ const openEditModal = (button) => {
   }
 };
 
+const createNewCourse = () => {
+  const coursesTreeView = document.getElementById('coursesTreeView');
+
+  const outerDiv = document.createElement('div');
+  outerDiv.setAttribute('class', 'row p-1 m-0 selectable');
+  outerDiv.setAttribute('id', `dummy`);
+
+  const angleDiv = document.createElement('div');
+  angleDiv.setAttribute('class', 'col-auto p-0 pe-1 angle-column');
+
+  const angleIcon = document.createElement('i');
+  angleIcon.setAttribute('class', 'fa-solid fa-angle-right');
+  angleDiv.appendChild(angleIcon);
+
+  outerDiv.appendChild(angleDiv);
+
+  const nameDiv = document.createElement('div');
+  nameDiv.setAttribute('class', 'col p-0 overflow-dots');
+
+  const form = document.createElement('form');
+  form.addEventListener('submit', (event) => newCourseFormSubmit(event));
+
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('class', 'form-control p-0 m-0 rounded-0 h-100');
+  input.setAttribute('onfocusout', 'removeDummy(event);');
+  input.setAttribute('required', 'true');
+  input.setAttribute('name', 'course_name');
+  form.appendChild(input);
+
+  nameDiv.appendChild(form);
+
+  outerDiv.appendChild(nameDiv);
+
+  coursesTreeView.insertBefore(outerDiv, coursesTreeView.firstChild);
+
+  input.focus();
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const createNewElement = () => {
+  const selectedArray = document.getElementsByClassName('selected');
+  if (selectedArray.length === 0) {
+    createNewCourse();
+  } else {
+    const selected = selectedArray[0];
+    if (selected.id.startsWith('course-')) {
+      createNewAssignment();
+    } else {
+      createNewTask();
+    }
+  }
+};
+
 const deleteCourse = async (courseId, actor) => {
   try {
     const response = await fetch(`/api/courses/delete/${courseId}`, {
@@ -632,66 +686,87 @@ const submitForm = async (mode) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const inputOnFocusOut = (input) => {
-  input.parentElement.parentElement.remove();
+const removeDummy = (event) => {
+  const formSubmitted =
+    event.relatedTarget && event.relatedTarget.type === 'submit';
+  if (formSubmitted) {
+    return;
+  }
+  const dummy = document.getElementById('dummy');
+  if (!!dummy) {
+    dummy.remove();
+  }
+};
+
+const completeCourseElement = (courseId, courseName) => {
+  const dummy = document.getElementById('dummy');
+  dummy.setAttribute('id', `course-${courseId}`);
+  dummy.setAttribute('data-course-id', courseId);
+  dummy.setAttribute('data-course-name', courseName);
+  dummy.setAttribute('onclick', `onClickSelectable(this)`);
+  dummy.setAttribute('tabindex', '0');
+  const col = dummy.getElementsByClassName('col')[0];
+  col.innerHTML = null;
+  const span = document.createElement('span');
+  span.innerHTML = courseName;
+  col.appendChild(span);
+  const form = dummy.getElementsByTagName('form')[0];
+  form.remove();
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createCourseComponent = () => {
-  return;
-};
-
 const newCourseFormSubmit = async (event) => {
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
+  try {
+    const inputs = document.getElementsByTagName('input');
+    for (const input of inputs) {
+      input.removeAttribute('onfocusout');
+    }
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
 
-  const user = document.getElementById('user');
-  const userId = user.getAttribute('data-user-id');
-  const actor = user.getAttribute('data-user-email');
-  const formDataObject = {
-    courseName: formData.get('courseName'),
-    userId,
-    actor
-  };
-  const url = '/api/courses';
-  const response = await fetch(url, {
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    method: 'POST',
-    body: JSON.stringify(formDataObject)
-  });
-  if (response.status == 201) {
-    showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
-  } else {
+    const user = document.getElementById('user');
+    const userId = user.getAttribute('data-user-id');
+    const actor = user.getAttribute('data-user-email');
+    const courseName = formData.get('course_name');
+    const formDataObject = {
+      course_name: courseName,
+      user_id: userId,
+      actor
+    };
+    const url = '/api/courses';
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(formDataObject)
+    });
+    if (response.status == 201) {
+      response.json().then((data) => {
+        completeCourseElement(data.course_id, courseName);
+      });
+      showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
+    } else {
+      removeDummy();
+      showAlert('error', 'Fehler beim Erstellen des Kurses!');
+    }
+  } catch (error) {
+    removeDummy();
     showAlert('error', 'Fehler beim Erstellen des Kurses!');
   }
-  form.parentElement.remove();
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const addNewCourse = () => {
-  const coursesTreeView = document.getElementById('coursesTreeView');
-  const div = document.createElement('div');
-  div.setAttribute('class', 'd-flex align-items-center p-025rem');
-  const span = document.createElement('span');
-  span.innerHTML = '&gt;&nbsp;';
-  const form = document.createElement('form');
-  form.setAttribute('class', 'flex-fill');
-  form.addEventListener('submit', (event) => newCourseFormSubmit(event));
-  const input = document.createElement('input');
-  input.setAttribute('type', 'text');
-  input.setAttribute('class', 'form-control');
-  input.setAttribute('onfocusout', 'inputOnFocusOut(this);');
-  input.setAttribute('required', 'true');
-  input.setAttribute('name', 'courseName');
-  form.appendChild(input);
-  div.appendChild(span);
-  div.appendChild(form);
-  coursesTreeView.insertBefore(div, coursesTreeView.firstChild);
-  input.focus();
+const removeSelected = (event, element) => {
+  if (event.target != element) {
+    return;
+  }
+  const selectedElements = document.getElementsByClassName('selected');
+  if (selectedElements.length > 0) {
+    selectedElements[0].classList.remove('selected');
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {

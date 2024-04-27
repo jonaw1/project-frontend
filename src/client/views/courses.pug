@@ -2,17 +2,17 @@ extends base-template.pug
 
 block content
   .courses-container.d-flex.gap-2
-      .col-auto.treeview-column.p-2
+      .col-auto.treeview-column.p-2(onclick="removeSelected(event, this);")
         .d-flex.flex-column.h-100
-          .d-flex.justify-content-end.align-items-center.sub-navbar.px-1.pb-2.gap-2
-            btn.fa-solid.fa-circle-plus.action-icon
+          .d-flex.justify-content-end.align-items-center.sub-navbar.px-1.pb-2.gap-2(onclick="removeSelected(event, this);")
+            btn.fa-solid.fa-circle-plus.action-icon(onclick="createNewElement();")
             btn.fa-solid.fa-pen-to-square.action-icon
             btn.fa-solid.fa-trash-can.action-icon(
               type="button", 
               data-bs-toggle="modal",
               data-bs-target="#deleteElementModal"
             )
-          #coursesTreeView
+          #coursesTreeView(onclick="removeSelected(event, this);")
             if courses.length > 0
               .container.p-0
               each course in courses 
