@@ -105,7 +105,7 @@ export const updateCourse = tryCatchWrapper(
             type: 'field',
             msg: 'Course ID does not exist for given user ID',
             path: 'course_id',
-            location: 'body'
+            location: 'params'
           }
         ]
       });
