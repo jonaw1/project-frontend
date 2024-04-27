@@ -1,4 +1,8 @@
 import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const logFormat = winston.format.printf(
   ({ level, message, timestamp, ...metadata }) => {
@@ -8,26 +12,43 @@ const logFormat = winston.format.printf(
   }
 );
 
+type TransportInstance =
+  | winston.transports.ConsoleTransportInstance
+  | DailyRotateFile;
+
+const transports: TransportInstance[] = [
+  new DailyRotateFile({
+    dirname: 'logs/%DATE%',
+    filename: '%DATE%-combined.log',
+    level: 'info',
+    datePattern: 'YYYY-MM-DD',
+    maxFiles: '30d'
+  }),
+
+  new DailyRotateFile({
+    dirname: 'logs/%DATE%',
+    filename: '%DATE%-debug.log',
+    level: 'debug',
+    datePattern: 'YYYY-MM-DD',
+    maxFiles: '30d'
+  }),
+
+  new DailyRotateFile({
+    dirname: 'logs/%DATE%',
+    filename: '%DATE%-error.log',
+    level: 'error',
+    datePattern: 'YYYY-MM-DD',
+    maxFiles: '30d'
+  })
+];
+
+if (process.env.STAGE == 'development') {
+  transports.push(new winston.transports.Console());
+}
+
 const logger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), logFormat),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-      level: 'info'
-    }),
-
-    new winston.transports.File({
-      filename: 'logs/debug.log',
-      level: 'debug'
-    }),
-
-    // Log error level messages to error.log
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error'
-    })
-  ]
+  transports
 });
 
 export default logger;
