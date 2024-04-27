@@ -1,12 +1,20 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { logApiCall, handleErrorsEV } from '../../middleware/middleware';
+import {
+  logApiCall,
+  handleErrorsEV,
+  validateTaskIdDB,
+  validateTaskNameForAssignmentDB
+} from '../../middleware/middleware';
 import {
   createTask,
   deleteTask,
   updateTask
 } from '../../controllers/tasksController';
-import { validateActorDB } from '../../middleware/middleware';
+import {
+  validateActorDB,
+  validateAssignmentIdBodyDB
+} from '../../middleware/middleware';
 
 const router = Router();
 
@@ -47,7 +55,9 @@ router.post(
     validateTaskNameEV(),
     validateAssignmentIdEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateAssignmentIdBodyDB,
+    validateTaskNameForAssignmentDB
   ],
   createTask
 );
@@ -59,7 +69,8 @@ router.put(
     validateTaskIdEV(),
     validateActorEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateTaskIdDB
   ],
   deleteTask
 );
@@ -73,7 +84,10 @@ router.put(
     validateTaskNameEV(),
     validateAssignmentIdEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateAssignmentIdBodyDB,
+    validateTaskIdDB,
+    validateTaskNameForAssignmentDB
   ],
   updateTask
 );

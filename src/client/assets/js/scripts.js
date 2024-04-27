@@ -710,8 +710,7 @@ const completeCourseElement = (courseId, courseName) => {
   const span = document.createElement('span');
   span.innerHTML = courseName;
   col.appendChild(span);
-  const form = dummy.getElementsByTagName('form')[0];
-  form.remove();
+  dummy.classList.add('selected');
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -746,8 +745,8 @@ const newCourseFormSubmit = async (event) => {
     if (response.status == 201) {
       response.json().then((data) => {
         completeCourseElement(data.course_id, courseName);
+        showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
       });
-      showAlert('success', 'Neuer Kurs erfolgreich erstellt!');
     } else {
       removeDummy();
       showAlert('error', 'Fehler beim Erstellen des Kurses!');

@@ -6,7 +6,12 @@ import {
   updateCourse,
   deleteCourse
 } from '../../controllers/coursesController';
-import { validateActorDB } from '../../middleware/middleware';
+import {
+  validateActorDB,
+  validateCourseIdParamsDB,
+  validateCourseNameForUserDB,
+  validateUserIdDB
+} from '../../middleware/middleware';
 
 const router = Router();
 
@@ -47,7 +52,9 @@ router.post(
     validateCourseNameEV(),
     validateUserIdEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateUserIdDB,
+    validateCourseNameForUserDB
   ],
   createCourse
 );
@@ -59,7 +66,8 @@ router.put(
     validateCourseIdEV(),
     validateActorEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateCourseIdParamsDB
   ],
   deleteCourse
 );
@@ -73,7 +81,10 @@ router.put(
     validateCourseNameEV(),
     validateUserIdEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateCourseIdParamsDB,
+    validateUserIdDB,
+    validateCourseNameForUserDB
   ],
   updateCourse
 );

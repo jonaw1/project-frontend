@@ -1,12 +1,19 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { logApiCall, handleErrorsEV } from '../../middleware/middleware';
+
 import {
   createAssignment,
   deleteAssignment,
   updateAssignment
 } from '../../controllers/assignmentsController';
-import { validateActorDB } from '../../middleware/middleware';
+import {
+  logApiCall,
+  handleErrorsEV,
+  validateAssignmentIdParamsDB,
+  validateActorDB,
+  validateCourseIdBodyDB,
+  validateAssignmentNameForCourseDB
+} from '../../middleware/middleware';
 
 const router = Router();
 
@@ -47,7 +54,9 @@ router.post(
     validateAssignmentNameEV(),
     validateCourseIdEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateCourseIdBodyDB,
+    validateAssignmentNameForCourseDB
   ],
   createAssignment
 );
@@ -59,13 +68,14 @@ router.put(
     validateAssignmentIdEV(),
     validateActorEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateAssignmentIdParamsDB
   ],
   deleteAssignment
 );
 
 router.put(
-  '/api/assignments/:assigment_id',
+  '/api/assignments/:assignment_id',
   [
     logApiCall,
     validateAssignmentIdEV(),
@@ -73,7 +83,10 @@ router.put(
     validateAssignmentNameEV(),
     validateCourseIdEV(),
     handleErrorsEV,
-    validateActorDB
+    validateActorDB,
+    validateCourseIdBodyDB,
+    validateAssignmentIdParamsDB,
+    validateAssignmentNameForCourseDB
   ],
   updateAssignment
 );
