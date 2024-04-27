@@ -1,6 +1,7 @@
 import logger from './logger';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { db } from '../db/database';
 
 export const logApiCall = (req: Request) => {
   logger.info(
@@ -33,5 +34,28 @@ export const handleErrors = (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     logger.error('Validation error', errors.array());
     return res.status(400).json({ errors: errors.array() });
+  }
+};
+
+export const validateActor = async (actor: string, res: Response) => {
+  const actorExists = await db('users')
+    .where({
+      email: actor,
+      active: true,
+      deleted: false
+    })
+    .first();
+  if (!actorExists) {
+    logger.error(`Actor not found`);
+    return res.status(400).json({
+      errors: [
+        {
+          type: 'field',
+          msg: 'Actor does not exist',
+          path: 'actor',
+          location: 'body'
+        }
+      ]
+    });
   }
 };
