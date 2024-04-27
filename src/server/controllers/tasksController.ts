@@ -7,11 +7,18 @@ export const createTask = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { task_name, assignment_id } = req.body;
 
-    await db('tasks').insert({ task_name, assignment_id });
+    const result = await db('tasks')
+      .insert({ task_name, assignment_id })
+      .returning('task_id');
+    const taskId = result[0].task_id;
     logger.info('Task successfully created');
     return res
       .status(201)
-      .json({ success: true, message: 'Task successfully created' });
+      .json({
+        success: true,
+        message: 'Task successfully created',
+        task_id: taskId
+      });
   }
 );
 
