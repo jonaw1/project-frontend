@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRoutes';
 import configurationRoutes from './routes/api/configurationRoutes';
 import courseRoutes from './routes/api/courseRoutes';
+import assignmentRoutes from './routes/api/assignmentRoutes';
 import taskRoutes from './routes/api/taskRoutes';
 import session from 'express-session';
 import { startDatabase } from './db/database';
@@ -79,6 +80,7 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 
 app.use('/', configurationRoutes);
 app.use('/', courseRoutes);
+app.use('/', assignmentRoutes);
 app.use('/', taskRoutes);
 app.use('/', indexRoute);
 app.use('/', authRoutes);
