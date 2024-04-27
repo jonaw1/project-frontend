@@ -1,25 +1,21 @@
 import logger from '../shared/logger';
 import { Request, Response } from 'express';
 import { db } from '../db/database';
-import { tryCatchWrapper } from '../shared/apiUtils';
+import { tryCatchWrapper, validateActor } from '../shared/apiUtils';
 
-const validateActor = async (actor: string, res: Response) => {
-  const actorExists = await db('users')
-    .where({
-      email: actor,
-      active: true,
-      deleted: false
-    })
+const validateCourseId = async (course_id: string, res: Response) => {
+  const courseExists = await db('courses')
+    .where({ course_id, deleted: false })
     .first();
-  if (!actorExists) {
-    logger.error(`Actor not found`);
+  if (!courseExists) {
+    logger.error(`Course ID not found`);
     return res.status(400).json({
       errors: [
         {
           type: 'field',
-          msg: 'Actor does not exist',
-          path: 'actor',
-          location: 'body'
+          msg: 'Course ID does not exist',
+          path: 'course_id',
+          location: 'params'
         }
       ]
     });
@@ -27,15 +23,15 @@ const validateActor = async (actor: string, res: Response) => {
 };
 
 const validateCourseName = async (
-  courseName: string,
-  userId: number,
+  course_name: string,
+  user_id: number,
   res: Response
 ) => {
   const courseNameExists = await db('courses')
     .where({
       deleted: false,
-      course_name: courseName,
-      user_id: userId
+      course_name,
+      user_id
     })
     .first();
   if (courseNameExists) {
@@ -53,9 +49,9 @@ const validateCourseName = async (
   }
 };
 
-const validateUserId = async (userId: number, res: Response) => {
+const validateUserId = async (user_id: number, res: Response) => {
   const userExists = await db('users')
-    .where({ user_id: userId, active: true, deleted: false })
+    .where({ user_id, active: true, deleted: false })
     .first();
   if (!userExists) {
     logger.error(`User ID not found`);
@@ -74,12 +70,12 @@ const validateUserId = async (userId: number, res: Response) => {
 
 export const createCourse = tryCatchWrapper(
   async (req: Request, res: Response) => {
-    const { courseName, userId, actor } = req.body;
+    const { course_name, user_id, actor } = req.body;
     await validateActor(actor, res);
-    await validateUserId(userId, res);
-    await validateCourseName(courseName, userId, res);
+    await validateUserId(user_id, res);
+    await validateCourseName(course_name, user_id, res);
 
-    await db('courses').insert({ course_name: courseName, user_id: userId });
+    await db('courses').insert({ course_name, user_id });
     logger.info('Course successfully created');
     return res
       .status(201)
@@ -89,33 +85,16 @@ export const createCourse = tryCatchWrapper(
 
 export const updateCourse = tryCatchWrapper(
   async (req: Request, res: Response) => {
-    const { courseId } = req.params;
-    const { courseName, userId, actor } = req.body;
+    const { course_id } = req.params;
+    const { course_name, user_id, actor } = req.body;
+    await validateCourseId(course_id, res);
     await validateActor(actor, res);
-    await validateUserId(userId, res);
-    await validateCourseName(courseName, userId, res);
-
-    const couldntFindCourse =
-      (await db('courses')
-        .where({ course_id: courseId, deleted: false })
-        .first()) == null;
-    if (couldntFindCourse) {
-      logger.error(`Course ID not found`);
-      return res.status(400).json({
-        errors: [
-          {
-            type: 'field',
-            msg: 'Course ID does not exist',
-            path: 'course_id',
-            location: 'body'
-          }
-        ]
-      });
-    }
+    await validateUserId(user_id, res);
+    await validateCourseName(course_name, user_id, res);
 
     const couldntFindCourseForUser =
       (await db('courses')
-        .where({ course_id: courseId, user_id: userId, deleted: false })
+        .where({ course_id, user_id, deleted: false })
         .first()) == null;
     if (couldntFindCourseForUser) {
       logger.error(`Course ID not found for given user ID`);
@@ -125,15 +104,13 @@ export const updateCourse = tryCatchWrapper(
             type: 'field',
             msg: 'Course ID does not exist for given user ID',
             path: 'course_id',
-            location: 'body'
+            location: 'params'
           }
         ]
       });
     }
 
-    await db('courses')
-      .update({ course_name: courseName })
-      .where({ course_id: courseId });
+    await db('courses').update({ course_name }).where({ course_id });
     return res
       .status(200)
       .json({ success: true, message: 'Course name successfully updated' });
@@ -142,13 +119,12 @@ export const updateCourse = tryCatchWrapper(
 
 export const deleteCourse = tryCatchWrapper(
   async (req: Request, res: Response) => {
-    const { courseId } = req.params;
+    const { course_id } = req.params;
     const { actor } = req.body;
+    await validateCourseId(course_id, res);
     await validateActor(actor, res);
 
-    await db('courses')
-      .update({ deleted: true })
-      .where({ course_id: courseId });
+    await db('courses').update({ deleted: true }).where({ course_id });
     return res
       .status(200)
       .json({ success: true, message: 'Course successfully deleted' });
