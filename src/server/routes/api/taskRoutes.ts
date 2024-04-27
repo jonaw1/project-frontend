@@ -1,11 +1,7 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { logApiCall, handleErrors } from '../../shared/apiUtils';
-import {
-  createCourse,
-  updateCourse,
-  deleteCourse
-} from '../../controllers/coursesController';
+import { createTask, deleteTask, updateTask } from '../../controllers/tasksController';
 
 const router = Router();
 
@@ -47,13 +43,13 @@ router.post(
     validateAssignmentId(),
     handleErrors
   ],
-  createCourse
+  createTask
 );
 
 router.put(
   '/api/tasks/delete/:task_id',
   [logApiCall, validateTaskId(), validateActor(), handleErrors],
-  deleteCourse
+  deleteTask
 );
 
 router.put(
@@ -66,7 +62,7 @@ router.put(
     validateAssignmentId(),
     handleErrors
   ],
-  updateCourse
+  updateTask
 );
 
 export default router;
