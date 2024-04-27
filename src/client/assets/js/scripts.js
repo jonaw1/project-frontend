@@ -231,6 +231,87 @@ const openEditModal = (button) => {
   }
 };
 
+const deleteCourse = async (courseId, actor) => {
+  try {
+    const response = await fetch(`/api/courses/delete/${courseId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        actor: actor
+      })
+    });
+
+    if (!response.ok) {
+      showAlert('error', 'Fehler beim Löschen des Kurses!');
+      return;
+    }
+
+    const course = document.getElementById(`course-${courseId}`);
+    course.remove();
+    const treeViewCourse = document.getElementById(`treeViewCourse${courseId}`);
+    treeViewCourse.remove();
+    showAlert('success', 'Kurs erfolgreich gelöscht!');
+  } catch (error) {
+    showAlert('error', 'Fehler beim Löschen des Kurses!');
+  }
+};
+
+const deleteAssignment = async (assignmentId, actor) => {
+  try {
+    const response = await fetch(`/api/assignments/delete/${assignmentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        actor: actor
+      })
+    });
+
+    if (!response.ok) {
+      showAlert('error', 'Fehler beim Löschen des Übungszettels!');
+      return;
+    }
+
+    const assignment = document.getElementById(`assignment-${assignmentId}`);
+    assignment.remove();
+    const treeViewAssignment = document.getElementById(
+      `treeViewAssignment${assignmentId}`
+    );
+    treeViewAssignment.remove();
+    showAlert('success', 'Übungszettel erfolgreich gelöscht!');
+  } catch (error) {
+    showAlert('error', 'Fehler beim Löschen des Übungszettels!');
+  }
+};
+
+const deleteTask = async (taskId, actor) => {
+  try {
+    const response = await fetch(`/api/tasks/delete/${taskId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        actor: actor
+      })
+    });
+
+    if (!response.ok) {
+      showAlert('error', 'Fehler beim Löschen der Aufgabe!');
+      return;
+    }
+
+    const task = document.getElementById(`task-${taskId}`);
+    task.remove();
+    showAlert('success', 'Aufgabe erfolgreich gelöscht!');
+  } catch (error) {
+    showAlert('error', 'Fehler beim Löschen der Aufgabe!');
+  }
+};
+
 const addListenerDeleteElementModal = () => {
   const deleteElementModal = document.getElementById('deleteElementModal');
   deleteElementModal.addEventListener('show.bs.modal', (event) => {
@@ -241,13 +322,24 @@ const addListenerDeleteElementModal = () => {
     }
     const selected = selectedArray[0];
     let name;
+    const deleteElementBtn = document.getElementById('deleteElementBtn');
+    const actor = document
+      .getElementById('user')
+      .getAttribute('data-user-email');
     if (selected.id.startsWith('course-')) {
       name = selected.getAttribute('data-course-name');
+      deleteElementBtn.onclick = async () =>
+        await deleteCourse(selected.getAttribute('data-course-id'), actor);
     } else if (selected.id.startsWith('assignment-')) {
       name =
         selected.getAttribute('data-course-name') +
         ' > ' +
         selected.getAttribute('data-assignment-name');
+      deleteElementBtn.onclick = async () =>
+        await deleteAssignment(
+          selected.getAttribute('data-assignment-id'),
+          actor
+        );
     } else {
       name =
         selected.getAttribute('data-course-name') +
@@ -255,6 +347,8 @@ const addListenerDeleteElementModal = () => {
         selected.getAttribute('data-assignment-name') +
         ' > ' +
         selected.getAttribute('data-task-name');
+      deleteElementBtn.onclick = async () =>
+        await deleteTask(selected.getAttribute('data-task-id'), actor);
     }
     const deleteElementText = document.getElementById('deleteElementText');
     deleteElementText.innerHTML =
@@ -504,10 +598,8 @@ const checkValidJSON = () => {
   const configurationTextArea = document.getElementById('configuration');
   const configuration = configurationTextArea.value;
   if (!isValidJSON(configuration)) {
-    console.log('INVALID');
     configurationTextArea.classList.add('invalid-border');
   } else {
-    console.log('VALID');
     configurationTextArea.classList.remove('invalid-border');
   }
 };

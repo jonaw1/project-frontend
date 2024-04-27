@@ -1,7 +1,7 @@
 import logger from '../shared/logger';
 import { Request, Response } from 'express';
 import { db } from '../db/database';
-import { tryCatchWrapper, validateActor } from '../shared/apiUtils';
+import { tryCatchWrapper } from '../shared/apiUtils';
 
 const validateCourseId = async (course_id: string, res: Response) => {
   const courseExists = await db('courses')
@@ -70,8 +70,7 @@ const validateUserId = async (user_id: number, res: Response) => {
 
 export const createCourse = tryCatchWrapper(
   async (req: Request, res: Response) => {
-    const { course_name, user_id, actor } = req.body;
-    await validateActor(actor, res);
+    const { course_name, user_id } = req.body;
     await validateUserId(user_id, res);
     await validateCourseName(course_name, user_id, res);
 
@@ -86,9 +85,8 @@ export const createCourse = tryCatchWrapper(
 export const updateCourse = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { course_id } = req.params;
-    const { course_name, user_id, actor } = req.body;
+    const { course_name, user_id } = req.body;
     await validateCourseId(course_id, res);
-    await validateActor(actor, res);
     await validateUserId(user_id, res);
     await validateCourseName(course_name, user_id, res);
 
@@ -120,9 +118,7 @@ export const updateCourse = tryCatchWrapper(
 export const deleteCourse = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { course_id } = req.params;
-    const { actor } = req.body;
     await validateCourseId(course_id, res);
-    await validateActor(actor, res);
 
     await db('courses').update({ deleted: true }).where({ course_id });
     return res

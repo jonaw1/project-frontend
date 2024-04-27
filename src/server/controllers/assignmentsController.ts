@@ -1,7 +1,7 @@
 import logger from '../shared/logger';
 import { Request, Response } from 'express';
 import { db } from '../db/database';
-import { tryCatchWrapper, validateActor } from '../shared/apiUtils';
+import { tryCatchWrapper } from '../shared/apiUtils';
 
 const validateAssignmentId = async (assignment_id: string, res: Response) => {
   const assignmentExists = await db('assignments')
@@ -70,8 +70,7 @@ const validateCourseId = async (course_id: number, res: Response) => {
 
 export const createAssignment = tryCatchWrapper(
   async (req: Request, res: Response) => {
-    const { assignment_name, course_id, actor } = req.body;
-    await validateActor(actor, res);
+    const { assignment_name, course_id } = req.body;
     await validateCourseId(course_id, res);
     await validateAssignmentName(assignment_name, course_id, res);
 
@@ -86,9 +85,8 @@ export const createAssignment = tryCatchWrapper(
 export const updateAssignment = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { assignment_id } = req.params;
-    const { assignment_name, course_id, actor } = req.body;
+    const { assignment_name, course_id } = req.body;
     await validateAssignmentId(assignment_id, res);
-    await validateActor(actor, res);
     await validateCourseId(course_id, res);
     await validateAssignmentName(assignment_name, course_id, res);
 
@@ -120,9 +118,7 @@ export const updateAssignment = tryCatchWrapper(
 export const deleteAssignment = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { assignment_id } = req.params;
-    const { actor } = req.body;
     await validateAssignmentId(assignment_id, res);
-    await validateActor(actor, res);
 
     await db('assignments').update({ deleted: true }).where({ assignment_id });
     return res

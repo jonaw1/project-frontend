@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { logApiCall } from '../../shared/apiUtils';
 import logger from '../../shared/logger';
 import { db } from '../../db/database';
+import { logApiCall } from '../../middleware/middleware';
 
 const router = Router();
 

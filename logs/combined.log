@@ -1,0 +1,171 @@
+2024-04-27T12:04:02.785Z [INFO]: Database was started successfully 
+2024-04-27T12:04:02.788Z [INFO]: Server is running on port 3000 
+2024-04-27T12:04:20.192Z [INFO]: User <admin@admin.com> logged in successfully 
+2024-04-27T12:04:20.219Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:04:27.745Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:04:27.752Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:04:32.431Z [INFO]: Received PUT request to /api/configuration/97: {"configuration":"{\n  \"syntax\": {\n    \"level\": \"ADVANCEDlol\"\n  },\n  \"styleSelected\": true,\n  \"semanticSelected\": true,\n  \"coverageSelected\": true,\n  \"classSelected\": true,\n  \"metricsSelected\": true,\n  \"style\": {\n    \"basisLevel\": \"BEGINNER\",\n    \"complexityLevel\": \"BEGINNER\",\n    \"namesLevel\": \"BEGINNER\",\n    \"classLength\": -1,\n    \"methodLength\": -1,\n    \"cyclomaticComplexity\": -1,\n    \"fieldsCount\": -1,\n    \"variableNamePattern\": \"[a-z][a-zA-Z0-9]*\",\n    \"methodNamePattern\": \"[a-z][a-zA-Z0-9]*\",\n    \"methodParameterNamePattern\": \"[a-z][a-zA-Z0-9]*\",\n    \"classNamePattern\": \"[A-Z][a-zA-Z0-9_]*\"\n  },\n  \"semantic\": {},\n  \"coverage\": {\n    \"feedback\": [\n      {\n        \"lineRanges\": \"\",\n        \"message\": \"\",\n        \"showFor\": \"PARTIALLY_MISSED\",\n        \"fileName\": \"\"\n      }\n    ],\n    \"showFullCoverageReport\": false,\n    \"showTestFailures\": true\n  },\n  \"classes\": {},\n  \"metrics\": {\n    \"amcThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"Increase your average method size, e.g. by joining multiple methods with mostly the same functionalities from over-engineering.\",\n      \"suggestionMax\": \"Decrease your average method size, e.g. by delegating functionalities to other newly created methods.\"\n    },\n    \"caThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class is used by too few other classes. Is this class even necessary? Can you implement this class's functionalities into already existing classes?\",\n      \"suggestionMax\": \"This class is used by too many other classes. Can you outsource some functionalities into already existing or new classes?\"\n    },\n    \"camThreshold\": {\n      \"min\": 0,\n      \"max\": 1,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class and their methods are or are close to being un-cohesive. Assimilate methods in your class in order to increase readability and decrease complexity at once.\",\n      \"suggestionMax\": \"This class and their methods are too cohesive. Your implemented methods are too close to being the same methods.\"\n    },\n    \"cbmThreshold\": {\n      \"min\": 0,\n      \"max\": 5,\n      \"noMax\": false,\n      \"suggestionMin\": \"The methods in this class are not or are hardly coupled, which means they have (close to) no interdependencies. Is this reasonable for your class?\",\n      \"suggestionMax\": \"The methods in this class are coupled to high, which means too many interdependencies, coordination and information flow between them. Try to minimize these dependencies between your methods.\"\n    },\n    \"cboThreshold\": {\n      \"min\": 0,\n      \"max\": 5,\n      \"noMax\": false,\n      \"suggestionMin\": \"The sum of all class couplings in this class is (close to) zero, which means they have (close to) no interdependencies to other classes. Is this reasonable for your class? Also, refer to afferent/efferent coupling metric.\",\n      \"suggestionMax\": \"The sum of all class couplings in this class is too high, which means too many interdependencies, coordination and information flow between them. Try to minimize these dependencies from this class to other classes. Also, refer to afferent/efferent coupling metric.\"\n    },\n    \"ccThreshold\": {\n      \"min\": 1,\n      \"max\": 100,\n      \"noMax\": true,\n      \"suggestionMin\": \"This method in the given class has very few different paths to take. It would be allowed to increase its complexity.\",\n      \"suggestionMax\": \"This method in the given class is too complex, too many paths are taken (ite-statements). Try to decrease the complexity by delegating functionalities into other methods or classes.\"\n    },\n    \"ceThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class is using too few other classes. Can some functionalities be implemented into other classes and be used?\",\n      \"suggestionMax\": \"This class is using too many other classes. Can some functionalities be joined by other classes or even be implemented in this specific class?\"\n    },\n    \"damThreshold\": {\n      \"min\": 0,\n      \"max\": 1,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class contains very few private (protected) attributes compared to to the total number of attributes. Try to encapsulate your class (make fields private, only access them by methods contained in this specific class if possible).\",\n      \"suggestionMax\": \"This class contains many private (protected) attributes compared to to the total number of attributes. Encapsulation is important, but sometimes over-engineering. Is this reasonable?\"\n    },\n    \"ditThreshold\": {\n      \"min\": 1,\n      \"max\": 6,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class has very few superclasses or only one superclass (Object.java). Is inheritance a possible option?\",\n      \"suggestionMax\": \"This class has many superclasses. Is this much inheritance possible over-engineering? Do certain subclasses have too similar or too few functionalities?\"\n    },\n    \"icThreshold\": {\n      \"min\": 0,\n      \"max\": 6,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class is coupled to few or no parent classes. Overriding parent methods could be a suitable option here.\",\n      \"suggestionMax\": \"This class is coupled to many parent classes. Overriding parent methods makes sense, but is not always necessary.\"\n    },\n    \"lcomThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"The modularisation of this class is too low. Too many methods operate on different attributes.\",\n      \"suggestionMax\": \"The modularisation of this class is quite high. You could think about the necessity if your class is very small.\"\n    },\n    \"lcom3Threshold\": {\n      \"min\": 0,\n      \"max\": 2,\n      \"noMax\": false,\n      \"suggestionMin\": \"The modularisation of this class is too low. Too many methods operate on different attributes.\",\n      \"suggestionMax\": \"The modularisation of this class is quite high. You could think about the necessity if your class is very small.\"\n    },\n    \"locThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class contains very few lines of code. Is it even necessary to put these functionalities into a separate class?\",\n      \"suggestionMax\": \"This class contains too many lines of code, it could be considered as a \\\"God Class\\\". Try to keep only the main functionality in this class, others should be implemented into other (new) classes.\"\n    },\n    \"mfaThreshold\": {\n      \"min\": 0,\n      \"max\": 1,\n      \"noMax\": false,\n      \"suggestionMin\": \"The functional abstraction of this class ist quite low. If possible, try to let his class inherit some methods.\",\n      \"suggestionMax\": \"The functional abstraction of this class is very high. Consider refactoring this class into an abstract class if this is not yet the case.\"\n    },\n    \"moaThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class contains too few class fields. In order to increase class aggregation, also increase the number of fields or merge this class into another.\",\n      \"suggestionMax\": \"This class contains too many class fields. Try to inline fields or extract functionalities into other classes.\"\n    },\n    \"nocThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class has very few or no immediate descendants. Would extending this class be reasonable?\",\n      \"suggestionMax\": \"This class has too much immediate descendants. Consider using multiple inheritance, i.e. creating subclasses of a subclass.\"\n    },\n    \"npmThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class uses few or no public methods. Is this intended?\",\n      \"suggestionMax\": \"This class uses mostly public methods. Try to decrease their visibility to force the information hiding principle.\"\n    },\n    \"rfcThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class has too few or zero (in-)directly executable methods. Is this class even necessary then?\",\n      \"suggestionMax\": \"This class is able to (in-)directly execute too many methods. This is a typical smell for a god class. Does your class have one main functionality? Can some functionalities be extracted into other existing or new classes?\"\n    },\n    \"wmcThreshold\": {\n      \"min\": 0,\n      \"max\": 100,\n      \"noMax\": false,\n      \"suggestionMin\": \"This class contains too few or zero methods. Is this class even necessary then?\",\n      \"suggestionMax\": \"This class contains too many methods. This is a typical smell for a god class. Does your class have one main functionality? Can some functionalities be extracted into other existing or new classes?\"\n    },\n    \"includeCallsToJdk\": false,\n    \"includeOnlyPublicClasses\": false\n  }\n}\n"} 
+2024-04-27T12:04:32.444Z [INFO]: User <admin@admin.com> successfully updated config for task <97> 
+2024-04-27T12:04:33.187Z [INFO]: Received GET request to /api/configuration/98: {} 
+2024-04-27T12:04:33.189Z [INFO]: User <admin@admin.com> successfully fetched config for task <98> 
+2024-04-27T12:04:33.793Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:04:33.795Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:11:00.728Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:11:02.794Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:11:02.796Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:12:05.077Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:13:03.409Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:13:05.437Z [INFO]: Received GET request to /api/configuration/1: {} 
+2024-04-27T12:13:05.439Z [INFO]: User <admin@admin.com> successfully fetched config for task <1> 
+2024-04-27T12:15:13.321Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:15:15.567Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:15:15.577Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:15:23.101Z [ERROR]: Error: 
+2024-04-27T12:16:59.976Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:17:01.933Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:17:01.943Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:17:03.554Z [ERROR]: Error: 
+2024-04-27T12:17:33.700Z [ERROR]: Error: 
+2024-04-27T12:17:36.776Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:17:39.832Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:17:39.833Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:17:41.434Z [ERROR]: Error: 
+2024-04-27T12:28:27.631Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:28:29.830Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:28:29.832Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:28:47.640Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:28:49.549Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:28:49.552Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:30:39.034Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:30:40.485Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:30:40.496Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:31:14.919Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:31:16.644Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:31:16.649Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:32:27.942Z [INFO]: Database was started successfully 
+2024-04-27T12:32:27.944Z [INFO]: Server is running on port 3000 
+2024-04-27T12:32:49.190Z [INFO]: Database was started successfully 
+2024-04-27T12:32:49.192Z [INFO]: Server is running on port 3000 
+2024-04-27T12:32:59.613Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:33:01.515Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:33:01.519Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:33:18.769Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T12:33:20.338Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T12:33:20.340Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T12:33:22.338Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"user"} 
+2024-04-27T12:33:22.350Z [ERROR]: Actor not found 
+2024-04-27T12:33:22.363Z [ERROR]: Internal Server Error: Cannot set headers after they are sent to the client {"code":"ERR_HTTP_HEADERS_SENT","stack":"Error: Cannot set headers after they are sent to the client\n    at ServerResponse.setHeader (node:_http_outgoing:703:11)\n    at ServerResponse.header (/Users/jonathanenvite/Documents/Uni/Winter 2324/Project/project-frontend/node_modules/express/lib/response.js:794:10)\n    at ServerResponse.send (/Users/jonathanenvite/Documents/Uni/Winter 2324/Project/project-frontend/node_modules/express/lib/response.js:174:12)\n    at ServerResponse.json (/Users/jonathanenvite/Documents/Uni/Winter 2324/Project/project-frontend/node_modules/express/lib/response.js:278:15)\n    at /Users/jonathanenvite/Documents/Uni/Winter 2324/Project/project-frontend/src/server/controllers/tasksController.ts:130:8\n    at Generator.next (<anonymous>)\n    at fulfilled (/Users/jonathanenvite/Documents/Uni/Winter 2324/Project/project-frontend/src/server/controllers/tasksController.ts:5:58)"}
+2024-04-27T12:37:13.557Z [INFO]: Database was started successfully 
+2024-04-27T12:37:13.558Z [INFO]: Server is running on port 3000 
+2024-04-27T12:37:23.950Z [INFO]: Database was started successfully 
+2024-04-27T12:37:23.952Z [INFO]: Server is running on port 3000 
+2024-04-27T12:37:29.131Z [INFO]: Database was started successfully 
+2024-04-27T12:37:29.133Z [INFO]: Server is running on port 3000 
+2024-04-27T12:37:30.955Z [INFO]: Database was started successfully 
+2024-04-27T12:37:30.957Z [INFO]: Server is running on port 3000 
+2024-04-27T12:37:58.498Z [INFO]: Database was started successfully 
+2024-04-27T12:37:58.499Z [INFO]: Server is running on port 3000 
+2024-04-27T12:38:01.583Z [INFO]: Database was started successfully 
+2024-04-27T12:38:01.585Z [INFO]: Server is running on port 3000 
+2024-04-27T12:39:22.280Z [INFO]: Database was started successfully 
+2024-04-27T12:39:22.282Z [INFO]: Server is running on port 3000 
+2024-04-27T13:08:07.973Z [INFO]: Database was started successfully 
+2024-04-27T13:08:07.975Z [INFO]: Server is running on port 3000 
+2024-04-27T13:08:09.973Z [INFO]: Database was started successfully 
+2024-04-27T13:08:09.975Z [INFO]: Server is running on port 3000 
+2024-04-27T13:08:17.584Z [INFO]: Database was started successfully 
+2024-04-27T13:08:17.586Z [INFO]: Server is running on port 3000 
+2024-04-27T13:08:58.792Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:09:01.285Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:09:01.291Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:09:02.649Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"user"} 
+2024-04-27T13:09:02.654Z [ERROR]: Actor not found 
+2024-04-27T13:10:19.154Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"user"} 
+2024-04-27T13:10:19.162Z [ERROR]: Actor not found 
+2024-04-27T13:10:20.624Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:10:22.237Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:10:22.238Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:10:23.925Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"user"} 
+2024-04-27T13:10:23.928Z [ERROR]: Actor not found 
+2024-04-27T13:11:19.071Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"user"} 
+2024-04-27T13:11:19.073Z [ERROR]: Actor not found 
+2024-04-27T13:13:11.297Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"user"} 
+2024-04-27T13:13:11.300Z [ERROR]: Actor not found 
+2024-04-27T13:14:55.703Z [INFO]: Database was started successfully 
+2024-04-27T13:14:55.705Z [INFO]: Server is running on port 3000 
+2024-04-27T13:14:59.458Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:15:01.636Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:15:01.640Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:15:03.210Z [INFO]: Received PUT request to /api/tasks/delete/97: {} 
+2024-04-27T13:15:03.216Z [ERROR]: Validation error {"0":{"type":"field","msg":"Actor is required","path":"actor","location":"body"}}
+2024-04-27T13:15:18.044Z [INFO]: Database was started successfully 
+2024-04-27T13:15:18.046Z [INFO]: Server is running on port 3000 
+2024-04-27T13:15:18.488Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:15:20.484Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:15:20.489Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:15:21.845Z [INFO]: Received PUT request to /api/tasks/delete/97: {} 
+2024-04-27T13:15:21.851Z [ERROR]: Validation error {"0":{"type":"field","msg":"Actor is required","path":"actor","location":"body"}}
+2024-04-27T13:15:46.248Z [INFO]: Database was started successfully 
+2024-04-27T13:15:46.249Z [INFO]: Server is running on port 3000 
+2024-04-27T13:15:49.135Z [INFO]: Database was started successfully 
+2024-04-27T13:15:49.137Z [INFO]: Server is running on port 3000 
+2024-04-27T13:15:51.832Z [INFO]: Database was started successfully 
+2024-04-27T13:15:51.834Z [INFO]: Server is running on port 3000 
+2024-04-27T13:16:55.403Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:16:57.368Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:16:57.374Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:16:58.717Z [INFO]: Received PUT request to /api/tasks/delete/97: {} 
+2024-04-27T13:16:58.722Z [ERROR]: Express-validator error {"0":{"type":"field","msg":"Actor is required","path":"actor","location":"body"}}
+2024-04-27T13:17:40.295Z [INFO]: Received PUT request to /api/tasks/delete/97: {} 
+2024-04-27T13:17:40.301Z [ERROR]: Express-validator error {"0":{"type":"field","msg":"Actor is required","path":"actor","location":"body"}}
+2024-04-27T13:17:43.975Z [INFO]: Received PUT request to /api/tasks/delete/97: {} 
+2024-04-27T13:17:43.979Z [ERROR]: Express-validator error {"0":{"type":"field","msg":"Actor is required","path":"actor","location":"body"}}
+2024-04-27T13:20:56.148Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:20:58.225Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:20:58.227Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:21:19.199Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:21:20.939Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:21:20.941Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:21:22.738Z [INFO]: Received PUT request to /api/tasks/delete/97: {"actor":"admin@admin.com"} 
+2024-04-27T13:21:22.744Z [ERROR]: Task ID not found 
+2024-04-27T13:21:27.745Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:21:30.980Z [INFO]: Received GET request to /api/configuration/97: {} 
+2024-04-27T13:21:30.987Z [INFO]: User <admin@admin.com> successfully fetched config for task <97> 
+2024-04-27T13:22:13.913Z [INFO]: Database was started successfully 
+2024-04-27T13:22:13.914Z [INFO]: Server is running on port 3000 
+2024-04-27T13:22:20.145Z [INFO]: Database was started successfully 
+2024-04-27T13:22:20.147Z [INFO]: Server is running on port 3000 
+2024-04-27T13:22:23.411Z [INFO]: Database was started successfully 
+2024-04-27T13:22:23.413Z [INFO]: Server is running on port 3000 
+2024-04-27T13:22:31.305Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:22:34.941Z [INFO]: Received GET request to /api/configuration/99: {} 
+2024-04-27T13:22:34.948Z [INFO]: User <admin@admin.com> successfully fetched config for task <99> 
+2024-04-27T13:22:37.297Z [INFO]: Received PUT request to /api/tasks/delete/99: {"actor":"admin@admin.com"} 
+2024-04-27T13:22:38.015Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:22:40.379Z [INFO]: Received GET request to /api/configuration/100: {} 
+2024-04-27T13:22:40.379Z [INFO]: User <admin@admin.com> successfully fetched config for task <100> 
+2024-04-27T13:22:40.972Z [INFO]: Received GET request to /api/configuration/98: {} 
+2024-04-27T13:22:40.972Z [INFO]: User <admin@admin.com> successfully fetched config for task <98> 
+2024-04-27T13:22:47.839Z [INFO]: Received GET request to /api/configuration/109: {} 
+2024-04-27T13:22:47.841Z [INFO]: User <admin@admin.com> successfully fetched config for task <109> 
+2024-04-27T13:22:52.526Z [INFO]: Received PUT request to /api/tasks/delete/109: {"actor":"admin@admin.com"} 
+2024-04-27T13:24:42.843Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:24:47.203Z [INFO]: Received PUT request to /api/assignments/delete/25: {"actor":"admin@admin.com"} 
+2024-04-27T13:24:49.619Z [INFO]: Received GET request to /api/configuration/98: {} 
+2024-04-27T13:24:49.627Z [INFO]: User <admin@admin.com> successfully fetched config for task <98> 
+2024-04-27T13:24:50.501Z [INFO]: Received GET request to /api/configuration/100: {} 
+2024-04-27T13:24:50.503Z [INFO]: User <admin@admin.com> successfully fetched config for task <100> 
+2024-04-27T13:24:52.488Z [INFO]: Received GET request to /api/configuration/98: {} 
+2024-04-27T13:24:52.491Z [INFO]: User <admin@admin.com> successfully fetched config for task <98> 
+2024-04-27T13:24:52.967Z [INFO]: Received GET request to /api/configuration/100: {} 
+2024-04-27T13:24:52.969Z [INFO]: User <admin@admin.com> successfully fetched config for task <100> 
+2024-04-27T13:26:10.650Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:26:40.547Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:26:45.677Z [INFO]: Received PUT request to /api/assignments/delete/27: {"actor":"admin@admin.com"} 
+2024-04-27T13:26:57.582Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:27:01.538Z [INFO]: Received PUT request to /api/assignments/delete/29: {"actor":"admin@admin.com"} 
+2024-04-27T13:27:42.958Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:27:45.643Z [INFO]: Received PUT request to /api/courses/delete/1: {"actor":"admin@admin.com"} 
+2024-04-27T13:27:47.563Z [INFO]: User <admin@admin.com> successfully fetched tree data 
+2024-04-27T13:27:55.048Z [INFO]: Received GET request to /api/configuration/111: {} 
+2024-04-27T13:27:55.050Z [INFO]: User <admin@admin.com> successfully fetched config for task <111> 

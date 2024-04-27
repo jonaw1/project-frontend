@@ -1,25 +1,31 @@
 import logger from '../shared/logger';
 import { Request, Response } from 'express';
 import { db } from '../db/database';
-import { tryCatchWrapper, validateActor } from '../shared/apiUtils';
+import { tryCatchWrapper } from '../shared/apiUtils';
 
-const validateTaskId = async (task_id: string, res: Response) => {
+interface ErrorObject {
+  type: string;
+  msg: string;
+  path: string;
+  location: string;
+}
+
+const validateTaskId = async (task_id: string): Promise<ErrorObject[]> => {
   const taskExists = await db('tasks')
     .where({ task_id, deleted: false })
     .first();
   if (!taskExists) {
     logger.error(`Task ID not found`);
-    return res.status(400).json({
-      errors: [
-        {
-          type: 'field',
-          msg: 'Task ID does not exist',
-          path: 'task_id',
-          location: 'params'
-        }
-      ]
-    });
+    return [
+      {
+        type: 'field',
+        msg: 'Task ID does not exist',
+        path: 'task_id',
+        location: 'params'
+      }
+    ];
   }
+  return [];
 };
 
 const validateTaskName = async (
@@ -70,8 +76,7 @@ const validateAssignmentId = async (assignment_id: number, res: Response) => {
 
 export const createTask = tryCatchWrapper(
   async (req: Request, res: Response) => {
-    const { task_name, assignment_id, actor } = req.body;
-    await validateActor(actor, res);
+    const { task_name, assignment_id } = req.body;
     await validateAssignmentId(assignment_id, res);
     await validateTaskName(task_name, assignment_id, res);
 
@@ -86,9 +91,8 @@ export const createTask = tryCatchWrapper(
 export const updateTask = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { task_id } = req.params;
-    const { task_name, assignment_id, actor } = req.body;
-    await validateTaskId(task_id, res);
-    await validateActor(actor, res);
+    const { task_name, assignment_id } = req.body;
+    await validateTaskId(task_id);
     await validateAssignmentId(assignment_id, res);
     await validateTaskName(task_name, assignment_id, res);
 
@@ -120,9 +124,7 @@ export const updateTask = tryCatchWrapper(
 export const deleteTask = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { task_id } = req.params;
-    const { actor } = req.body;
-    await validateTaskId(task_id, res);
-    await validateActor(actor, res);
+    await validateTaskId(task_id);
 
     await db('tasks').update({ deleted: true }).where({ task_id });
     return res

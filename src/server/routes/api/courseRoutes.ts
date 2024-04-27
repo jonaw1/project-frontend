@@ -1,36 +1,37 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { logApiCall, handleErrors } from '../../shared/apiUtils';
+import { logApiCall, handleErrorsEV } from '../../middleware/middleware';
 import {
   createCourse,
   updateCourse,
   deleteCourse
 } from '../../controllers/coursesController';
+import { validateActorDB } from '../../middleware/middleware';
 
 const router = Router();
 
-const validateActor = () =>
+const validateActorEV = () =>
   body('actor')
     .notEmpty()
     .withMessage('Actor is required')
     .trim()
     .isString()
     .withMessage('Actor must be a string');
-const validateCourseName = () =>
+const validateCourseNameEV = () =>
   body('course_name')
     .notEmpty()
     .withMessage('Course name is required')
     .trim()
     .isString()
     .withMessage('Course name must be a string');
-const validateUserId = () =>
+const validateUserIdEV = () =>
   body('user_id')
     .notEmpty()
     .withMessage('User ID is required')
     .trim()
     .isNumeric()
     .withMessage('User ID must be numeric');
-const validateCourseId = () =>
+const validateCourseIdEV = () =>
   param('course_id')
     .notEmpty()
     .withMessage('Course ID is required')
@@ -42,17 +43,24 @@ router.post(
   '/api/courses',
   [
     logApiCall,
-    validateActor(),
-    validateCourseName(),
-    validateUserId(),
-    handleErrors
+    validateActorEV(),
+    validateCourseNameEV(),
+    validateUserIdEV(),
+    handleErrorsEV,
+    validateActorDB
   ],
   createCourse
 );
 
 router.put(
   '/api/courses/delete/:course_id',
-  [logApiCall, validateCourseId(), validateActor(), handleErrors],
+  [
+    logApiCall,
+    validateCourseIdEV(),
+    validateActorEV(),
+    handleErrorsEV,
+    validateActorDB
+  ],
   deleteCourse
 );
 
@@ -60,11 +68,12 @@ router.put(
   '/api/courses/:course_id',
   [
     logApiCall,
-    validateCourseId(),
-    validateActor(),
-    validateCourseName(),
-    validateUserId(),
-    handleErrors
+    validateCourseIdEV(),
+    validateActorEV(),
+    validateCourseNameEV(),
+    validateUserIdEV(),
+    handleErrorsEV,
+    validateActorDB
   ],
   updateCourse
 );

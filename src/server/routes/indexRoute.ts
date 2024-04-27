@@ -39,17 +39,21 @@ router.get(
     const user_id = req.session.user?.user_id;
     let courses;
     try {
-      courses = await db('courses').where({ user_id }).orderBy('course_name');
+      courses = await db('courses')
+        .where({ user_id, deleted: false })
+        .orderBy('course_name');
       for (const course of courses) {
         const assignments = await db('assignments')
           .where({
-            course_id: course.course_id
+            course_id: course.course_id,
+            deleted: false
           })
           .orderBy('assignment_name');
         for (const assignment of assignments) {
           assignment.tasks = await db('tasks')
             .where({
-              assignment_id: assignment.assignment_id
+              assignment_id: assignment.assignment_id,
+              deleted: false
             })
             .orderBy('task_name');
         }
