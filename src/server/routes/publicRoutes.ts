@@ -42,7 +42,7 @@ router.get('/api/tasks', async (_req: Request, res: Response) => {
 });
 
 router.post('/api/run', async (req, res) => {
-  const { task_id, answers } = req.body;
+  const { task_id, answers, language } = req.body;
 
   try {
     const task = await db('tasks').where({ task_id }).first();
@@ -54,6 +54,9 @@ router.post('/api/run', async (req, res) => {
     if (!answers) {
       return res.status(400).json({ error: 'No answers provided' });
     }
+
+    const massConfig = JSON.parse(task.configuration)
+    massConfig.preferredLanguage = language
 
     const response = await (
       await fetch(process.env.CLOUDCHECK_URL as string, {
@@ -75,7 +78,7 @@ router.post('/api/run', async (req, res) => {
             question: null,
             checkerClass: null,
             settings: null,
-            mass: JSON.parse(task.configuration)
+            mass: massConfig,
           },
           pipeline: [
             {
@@ -115,7 +118,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
-  const { task_id } = req.body;
+  const { task_id, language } = req.body;
   const file = req.file;
 
   if (!file) {
@@ -140,6 +143,9 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
+    const massConfig = JSON.parse(task.configuration)
+    massConfig.preferredLanguage = language
+
     const response = await (
       await fetch(process.env.CLOUDCHECK_URL as string, {
         method: 'POST',
@@ -159,7 +165,7 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
             question: null,
             checkerClass: null,
             settings: null,
-            mass: JSON.parse(task.configuration)
+            mass: massConfig,
           },
           pipeline: [
             {

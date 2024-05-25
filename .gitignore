@@ -4,3 +4,4 @@ src/server/db/database.sqlite
 **/.DS_Store
 dist/
 logs/
+*.log
