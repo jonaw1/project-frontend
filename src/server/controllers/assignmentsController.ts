@@ -7,18 +7,16 @@ export const createAssignment = tryCatchWrapper(
   async (req: Request, res: Response) => {
     const { assignment_name, course_id } = req.body;
 
-    const result = await db('tasks')
+    const result = await db('assignments')
       .insert({ assignment_name, course_id })
       .returning('assignment_id');
     const assignmentId = result[0].assignment_id;
     logger.info('Assignment successfully created');
-    return res
-      .status(201)
-      .json({
-        success: true,
-        message: 'Assignment successfully created',
-        assignment_id: assignmentId
-      });
+    return res.status(201).json({
+      success: true,
+      message: 'Assignment successfully created',
+      assignment_id: assignmentId
+    });
   }
 );
 
@@ -28,7 +26,7 @@ export const updateAssignment = tryCatchWrapper(
     const { assignment_name, course_id } = req.body;
 
     const couldntFindAssignmentForCourse =
-      (await db('assignment')
+      (await db('assignments')
         .where({ assignment_id, course_id, deleted: false })
         .first()) == null;
     if (couldntFindAssignmentForCourse) {
@@ -45,7 +43,8 @@ export const updateAssignment = tryCatchWrapper(
       });
     }
 
-    await db('tasks').update({ assignment_name }).where({ course_id });
+    await db('assignments').update({ assignment_name }).where({ course_id });
+    logger.info('Assignment name successfully updated');
     return res
       .status(200)
       .json({ success: true, message: 'Assignment name successfully updated' });
@@ -57,6 +56,7 @@ export const deleteAssignment = tryCatchWrapper(
     const { assignment_id } = req.params;
 
     await db('assignments').update({ deleted: true }).where({ assignment_id });
+    logger.info('Assignment successfully deleted');
     return res
       .status(200)
       .json({ success: true, message: 'Assignment successfully deleted' });

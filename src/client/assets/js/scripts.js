@@ -270,6 +270,174 @@ const createNewCourse = () => {
   input.focus();
 };
 
+const createNewTreeViewCourse = (courseId) => {
+  const treeViewCourse = document.createElement('div');
+  treeViewCourse.setAttribute('id', `treeViewCourse${courseId}`);
+  treeViewCourse.setAttribute('class', 'row px-1 m-0');
+
+  const vlCol = document.createElement('div');
+  vlCol.setAttribute(
+    'class',
+    'col-auto p-0 pe-1 angle-column d-flex justify-content-center'
+  );
+
+  const vl = document.createElement('div');
+  vl.setAttribute('class', 'vl');
+  vlCol.appendChild(vl);
+
+  treeViewCourse.appendChild(vlCol);
+
+  const parentCol = document.createElement('div');
+  parentCol.setAttribute('class', 'col p-0');
+  treeViewCourse.appendChild(parentCol);
+  return treeViewCourse;
+};
+
+const createNewTreeViewAssignment = (assignmentId) => {
+  const treeViewAssignment = document.createElement('div');
+  treeViewAssignment.setAttribute('id', `treeViewAssignment${assignmentId}`);
+  treeViewAssignment.setAttribute('class', 'row px-1 m-0');
+
+  const vlCol = document.createElement('div');
+  vlCol.setAttribute(
+    'class',
+    'col-auto p-0 pe-1 angle-column d-flex justify-content-center'
+  );
+
+  const vl = document.createElement('div');
+  vl.setAttribute('class', 'vl');
+  vlCol.appendChild(vl);
+
+  treeViewAssignment.appendChild(vlCol);
+
+  const parentCol = document.createElement('div');
+  parentCol.setAttribute('class', 'col p-0');
+  treeViewAssignment.appendChild(parentCol);
+  return treeViewAssignment;
+};
+
+const createNewAssignment = (courseId) => {
+  let treeViewCourse = document.getElementById('treeViewCourse' + courseId);
+  if (!treeViewCourse) {
+    treeViewCourse = createNewTreeViewCourse(courseId);
+    const courseElement = document.getElementById(`course-${courseId}`);
+    const courseElementParent = courseElement.parentNode;
+    courseElementParent.insertBefore(treeViewCourse, courseElement.nextSibling);
+
+    const i = courseElement.getElementsByTagName('i')[0];
+    const isAngleRight = i.classList.contains('fa-angle-right');
+    if (isAngleRight) {
+      i.classList.add('fa-angle-down');
+      i.classList.remove('fa-angle-right');
+    }
+  }
+  if (treeViewCourse.hidden) {
+    const courseElement = document.getElementById(`course-${courseId}`);
+    courseElement.click();
+  }
+
+  const parentCol = treeViewCourse.childNodes[1];
+
+  const outerDiv = document.createElement('div');
+  outerDiv.setAttribute('class', 'row p-1 m-0 selectable');
+  outerDiv.setAttribute('id', `dummy`);
+  parentCol.appendChild(outerDiv);
+
+  const angleDiv = document.createElement('div');
+  angleDiv.setAttribute('class', 'col-auto p-0 pe-1 angle-column');
+
+  const angleIcon = document.createElement('i');
+  angleIcon.setAttribute('class', 'fa-solid fa-angle-right');
+  angleDiv.appendChild(angleIcon);
+
+  outerDiv.appendChild(angleDiv);
+
+  const nameDiv = document.createElement('div');
+  nameDiv.setAttribute('class', 'col p-0 overflow-dots');
+
+  const form = document.createElement('form');
+  form.addEventListener('submit', (event) =>
+    newAssignmentFormSubmit(event, courseId)
+  );
+
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('class', 'form-control p-0 m-0 rounded-0 h-100');
+  input.setAttribute('onfocusout', 'removeDummy();');
+  input.setAttribute('required', 'true');
+  input.setAttribute('name', 'assignment_name');
+  form.appendChild(input);
+
+  nameDiv.appendChild(form);
+
+  outerDiv.appendChild(nameDiv);
+
+  parentCol.insertBefore(outerDiv, parentCol.firstChild);
+
+  input.focus();
+};
+
+const createNewTask = (assignmentId, courseId) => {
+  let treeViewAssignment = document.getElementById(
+    'treeViewAssignment' + assignmentId
+  );
+  if (!treeViewAssignment) {
+    treeViewAssignment = createNewTreeViewAssignment(assignmentId);
+    const assignmentElement = document.getElementById(
+      `assignment-${assignmentId}`
+    );
+    const assignmentElementParent = assignmentElement.parentNode;
+    assignmentElementParent.insertBefore(
+      treeViewAssignment,
+      assignmentElement.nextSibling
+    );
+
+    const i = assignmentElement.getElementsByTagName('i')[0];
+    const isAngleRight = i.classList.contains('fa-angle-right');
+    if (isAngleRight) {
+      i.classList.add('fa-angle-down');
+      i.classList.remove('fa-angle-right');
+    }
+  }
+  if (treeViewAssignment.hidden) {
+    const assignmentElement = document.getElementById(
+      `assignment-${assignmentId}`
+    );
+    assignmentElement.click();
+  }
+
+  const parentCol = treeViewAssignment.childNodes[1];
+
+  const outerDiv = document.createElement('div');
+  outerDiv.setAttribute('class', 'row p-1 m-0 selectable');
+  outerDiv.setAttribute('id', `dummy`);
+  parentCol.appendChild(outerDiv);
+
+  const nameDiv = document.createElement('div');
+  nameDiv.setAttribute('class', 'col p-0 overflow-dots');
+
+  const form = document.createElement('form');
+  form.addEventListener('submit', (event) =>
+    newTaskFormSubmit(event, assignmentId, courseId)
+  );
+
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('class', 'form-control p-0 m-0 rounded-0 h-100');
+  input.setAttribute('onfocusout', 'removeDummy();');
+  input.setAttribute('required', 'true');
+  input.setAttribute('name', 'task_name');
+  form.appendChild(input);
+
+  nameDiv.appendChild(form);
+
+  outerDiv.appendChild(nameDiv);
+
+  parentCol.insertBefore(outerDiv, parentCol.firstChild);
+
+  input.focus();
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createNewElement = () => {
   const selectedArray = document.getElementsByClassName('selected');
@@ -278,11 +446,127 @@ const createNewElement = () => {
   } else {
     const selected = selectedArray[0];
     if (selected.id.startsWith('course-')) {
-      createNewAssignment();
-    } else {
-      createNewTask();
+      const courseId = selected.id.split('-')[1];
+      createNewAssignment(courseId);
+    } else if (selected.id.startsWith('assignment-')) {
+      const courseId = selected.getAttribute('data-course-id');
+      const assignmentId = selected.id.split('-')[1];
+      createNewTask(assignmentId, courseId);
+    } else if (selected.id.startsWith('task-')) {
+      const courseId = selected.getAttribute('data-course-id');
+      const assignmentId = selected.getAttribute('data-assignment-id');
+      createNewTask(assignmentId, courseId);
     }
   }
+};
+
+const resetEdit = (selectedId, elementName) => {
+  const form = document.getElementById('editElementForm');
+  form.remove();
+  const selectElement = document.getElementById(selectedId);
+  selectElement.classList.add('selected');
+  const nameDiv = selectElement.childNodes[1];
+  const span = document.createElement('span');
+  span.innerHTML = elementName;
+  nameDiv.appendChild(span);
+};
+
+const editElementFormSubmit = async (event, selectedId, elementId, type) => {
+  try {
+    const inputs = document.getElementsByTagName('input');
+    for (const input of inputs) {
+      input.removeAttribute('onfocusout');
+    }
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const user = document.getElementById('user');
+    const actor = user.getAttribute('data-user-email');
+    const elementName = formData.get('element_name');
+    const selectedElement = document.getElementById(selectedId);
+    let formDataObject;
+    if (type === 'course') {
+      const userId = user.getAttribute('data-user-id');
+      formDataObject = {
+        course_name: elementName,
+        user_id: userId,
+        actor
+      };
+    } else if (type === 'assignment') {
+      const courseId = selectedElement.getAttribute('data-course-id');
+      formDataObject = {
+        assignment_name: elementName,
+        course_id: courseId,
+        actor
+      };
+    } else {
+      const assignmentId = selectedElement.getAttribute('data-assignment-id');
+      formDataObject = {
+        task_name: elementName,
+        assignment_id: assignmentId,
+        actor
+      };
+    }
+    const url = `/api/${type}s/${elementId}`;
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'PUT',
+      body: JSON.stringify(formDataObject)
+    });
+    const data = await response.json();
+    if (response.status == 200) {
+      resetEdit(selectedId, elementName);
+      showAlert('success', 'Name erfolgreich geändert!');
+    } else {
+      resetEdit(selectedId, elementName);
+      showAlert('error', 'Fehler beim Ändern des Namens!');
+    }
+  } catch (error) {
+    resetEdit(selectedId, elementName);
+    showAlert('error', 'Fehler beim Ändern des Namens!');
+  }
+};
+
+const editElement = () => {
+  const selectedArray = document.getElementsByClassName('selected');
+  if (selectedArray.length === 0) {
+    return;
+  }
+  const selected = selectedArray[0];
+  selected.classList.remove('selected');
+  const selectedId = selected.id;
+  const type = selectedId.split('-')[0];
+  const elementId = selectedId.split('-')[1];
+
+  const nameDiv = selected.childNodes[1];
+  nameDiv.innerHTML = null;
+
+  const elementName = selected.getAttribute(`data-${type}-name`);
+
+  const form = document.createElement('form');
+  form.setAttribute('id', 'editElementForm');
+  form.addEventListener('submit', (event) =>
+    editElementFormSubmit(event, selectedId, elementId, type)
+  );
+
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('class', 'form-control p-0 m-0 rounded-0 h-100');
+  input.setAttribute(
+    'onfocusout',
+    `resetEdit('${selectedId}', '${elementName}');`
+  );
+  input.setAttribute('required', 'true');
+  input.setAttribute('name', 'element_name');
+  form.appendChild(input);
+
+  nameDiv.appendChild(form);
+
+  input.focus();
 };
 
 const deleteCourse = async (courseId, actor) => {
@@ -305,7 +589,9 @@ const deleteCourse = async (courseId, actor) => {
     const course = document.getElementById(`course-${courseId}`);
     course.remove();
     const treeViewCourse = document.getElementById(`treeViewCourse${courseId}`);
-    treeViewCourse.remove();
+    if (treeViewCourse) {
+      treeViewCourse.remove();
+    }
     showAlert('success', 'Kurs erfolgreich gelöscht!');
   } catch (error) {
     showAlert('error', 'Fehler beim Löschen des Kurses!');
@@ -334,7 +620,9 @@ const deleteAssignment = async (assignmentId, actor) => {
     const treeViewAssignment = document.getElementById(
       `treeViewAssignment${assignmentId}`
     );
-    treeViewAssignment.remove();
+    if (treeViewAssignment) {
+      treeViewAssignment.remove();
+    }
     showAlert('success', 'Übungszettel erfolgreich gelöscht!');
   } catch (error) {
     showAlert('error', 'Fehler beim Löschen des Übungszettels!');
@@ -638,6 +926,13 @@ const showAlert = (type, text) => {
   button.setAttribute('aria-label', 'Close');
   alert.appendChild(button);
   header.appendChild(alert);
+
+  setTimeout(() => {
+    alert.classList.remove('show');
+    alert.addEventListener('transitionend', () => {
+      alert.remove();
+    });
+  }, 3000);
 };
 
 const clearAlerts = () => {
@@ -708,6 +1003,70 @@ const completeCourseElement = (courseId, courseName) => {
   dummy.classList.add('selected');
 };
 
+const completeAssignmentElement = (assignmentId, assignmentName, courseId) => {
+  const dummy = document.getElementById('dummy');
+  dummy.setAttribute('id', `assignment-${assignmentId}`);
+  dummy.setAttribute('data-assignment-id', assignmentId);
+  dummy.setAttribute('data-assignment-name', assignmentName);
+
+  const courseElement = document.getElementById(`course-${courseId}`);
+  const courseName = courseElement.getAttribute('data-course-name');
+  dummy.setAttribute('data-course-id', courseId);
+  dummy.setAttribute('data-course-name', courseName);
+  dummy.setAttribute('onclick', `onClickSelectable(this)`);
+  dummy.setAttribute('tabindex', '0');
+  const col = dummy.getElementsByClassName('col')[0];
+  col.innerHTML = null;
+  const span = document.createElement('span');
+  span.innerHTML = assignmentName;
+  col.appendChild(span);
+
+  const selecteds = document.getElementsByClassName('selected');
+  if (selecteds.length > 0) {
+    selecteds[0].classList.remove('selected');
+  }
+  dummy.classList.add('selected');
+};
+
+const completeTaskElement = (taskId, taskName, assignmentId, courseId) => {
+  const dummy = document.getElementById('dummy');
+  dummy.setAttribute('id', `task-${taskId}`);
+  dummy.setAttribute('data-task-id', taskId);
+  dummy.setAttribute('data-task-name', taskName);
+
+  const assignmentElement = document.getElementById(
+    `assignment-${assignmentId}`
+  );
+  const assignmentName = assignmentElement.getAttribute('data-assignment-name');
+  dummy.setAttribute('data-assignment-id', assignmentId);
+  dummy.setAttribute('data-assignment-name', assignmentName);
+
+  const courseElement = document.getElementById(`course-${courseId}`);
+  const courseName = courseElement.getAttribute('data-course-name');
+  dummy.setAttribute('data-course-id', courseId);
+  dummy.setAttribute('data-course-name', courseName);
+  dummy.setAttribute('onclick', `onClickSelectable(this)`);
+  dummy.setAttribute('tabindex', '0');
+  const col = dummy.getElementsByClassName('col')[0];
+  col.innerHTML = null;
+  const span = document.createElement('span');
+  span.innerHTML = taskName;
+  col.appendChild(span);
+
+  const selecteds = document.getElementsByClassName('selected');
+  if (selecteds.length > 0) {
+    selecteds[0].classList.remove('selected');
+  }
+  dummy.classList.add('selected');
+
+  const fileIconDiv = document.createElement('div');
+  fileIconDiv.setAttribute('class', 'col-auto p-0 pe-1 angle-column');
+  const fileIcon = document.createElement('i');
+  fileIcon.setAttribute('class', 'fa-regular fa-file-lines');
+  fileIconDiv.appendChild(fileIcon);
+  dummy.insertBefore(fileIconDiv, dummy.childNodes[0]);
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const newCourseFormSubmit = async (event) => {
   try {
@@ -748,6 +1107,90 @@ const newCourseFormSubmit = async (event) => {
   } catch (error) {
     removeDummy();
     showAlert('error', 'Fehler beim Erstellen des Kurses!');
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const newAssignmentFormSubmit = async (event, courseId) => {
+  try {
+    const inputs = document.getElementsByTagName('input');
+    for (const input of inputs) {
+      input.removeAttribute('onfocusout');
+    }
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const user = document.getElementById('user');
+    const actor = user.getAttribute('data-user-email');
+    const assignmentName = formData.get('assignment_name');
+    const formDataObject = {
+      assignment_name: assignmentName,
+      course_id: courseId,
+      actor
+    };
+    const url = '/api/assignments';
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(formDataObject)
+    });
+    const data = await response.json();
+    if (response.status == 201) {
+      completeAssignmentElement(data.assignment_id, assignmentName, courseId);
+      showAlert('success', 'Neuer Übungszettel erfolgreich erstellt!');
+    } else {
+      removeDummy();
+      showAlert('error', 'Fehler beim Erstellen des Übungszettels!');
+    }
+  } catch (error) {
+    removeDummy();
+    showAlert('error', 'Fehler beim Erstellen des Übungszettels!');
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const newTaskFormSubmit = async (event, assignmentId, courseId) => {
+  try {
+    const inputs = document.getElementsByTagName('input');
+    for (const input of inputs) {
+      input.removeAttribute('onfocusout');
+    }
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const user = document.getElementById('user');
+    const actor = user.getAttribute('data-user-email');
+    const taskName = formData.get('task_name');
+    const formDataObject = {
+      task_name: taskName,
+      assignment_id: assignmentId,
+      actor
+    };
+    const url = '/api/tasks';
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(formDataObject)
+    });
+    const data = await response.json();
+    if (response.status == 201) {
+      completeTaskElement(data.task_id, taskName, assignmentId, courseId);
+      showAlert('success', 'Neue Aufgabe erfolgreich erstellt!');
+    } else {
+      removeDummy();
+      showAlert('error', 'Fehler beim Erstellen der Aufgabe!');
+    }
+  } catch (error) {
+    removeDummy();
+    showAlert('error', 'Fehler beim Erstellen der Aufgabe!');
   }
 };
 

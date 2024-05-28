@@ -44,6 +44,7 @@ export const updateCourse = tryCatchWrapper(
     }
 
     await db('courses').update({ course_name }).where({ course_id });
+    logger.info('Course name successfully updated');
     return res
       .status(200)
       .json({ success: true, message: 'Course name successfully updated' });
@@ -55,6 +56,7 @@ export const deleteCourse = tryCatchWrapper(
     const { course_id } = req.params;
 
     await db('courses').update({ deleted: true }).where({ course_id });
+    logger.info('Course successfully deleted');
     return res
       .status(200)
       .json({ success: true, message: 'Course successfully deleted' });

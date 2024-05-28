@@ -6,7 +6,7 @@ block content
         .d-flex.flex-column.h-100
           .d-flex.justify-content-end.align-items-center.sub-navbar.px-1.pb-2.gap-2(onclick="removeSelected(event, this);")
             btn.fa-solid.fa-circle-plus.action-icon(onclick="createNewElement();")
-            btn.fa-solid.fa-pen-to-square.action-icon
+            btn.fa-solid.fa-pen-to-square.action-icon(onclick="editElement();")
             btn.fa-solid.fa-trash-can.action-icon(
               type="button", 
               data-bs-toggle="modal",

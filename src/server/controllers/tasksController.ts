@@ -12,13 +12,11 @@ export const createTask = tryCatchWrapper(
       .returning('task_id');
     const taskId = result[0].task_id;
     logger.info('Task successfully created');
-    return res
-      .status(201)
-      .json({
-        success: true,
-        message: 'Task successfully created',
-        task_id: taskId
-      });
+    return res.status(201).json({
+      success: true,
+      message: 'Task successfully created',
+      task_id: taskId
+    });
   }
 );
 
@@ -46,6 +44,7 @@ export const updateTask = tryCatchWrapper(
     }
 
     await db('tasks').update({ task_name }).where({ task_id });
+    logger.info('Task name successfully updated');
     return res
       .status(200)
       .json({ success: true, message: 'Task name successfully updated' });
@@ -57,6 +56,7 @@ export const deleteTask = tryCatchWrapper(
     const { task_id } = req.params;
 
     await db('tasks').update({ deleted: true }).where({ task_id });
+    logger.info('Task successfully deleted');
     return res
       .status(200)
       .json({ success: true, message: 'Task successfully deleted' });

@@ -217,7 +217,7 @@ export const validateAssignmentNameForCourseDB = async (
   next: NextFunction
 ) => {
   const { assignment_name, course_id } = req.body;
-  const assignmentNameExists = await db('tasks')
+  const assignmentNameExists = await db('assignments')
     .where({
       deleted: false,
       assignment_name,
