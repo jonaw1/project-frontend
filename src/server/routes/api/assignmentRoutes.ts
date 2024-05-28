@@ -1,32 +1,44 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { logApiCall, handleErrors } from '../../shared/apiUtils';
-import { createAssignment, deleteAssignment, updateAssignment } from '../../controllers/assignmentsController';
+
+import {
+  createAssignment,
+  deleteAssignment,
+  updateAssignment
+} from '../../controllers/assignmentsController';
+import {
+  logApiCall,
+  handleErrorsEV,
+  validateAssignmentIdParamsDB,
+  validateActorDB,
+  validateCourseIdBodyDB,
+  validateAssignmentNameForCourseDB
+} from '../../middleware/middleware';
 
 const router = Router();
 
-const validateActor = () =>
+const validateActorEV = () =>
   body('actor')
     .notEmpty()
     .withMessage('Actor is required')
     .trim()
     .isString()
     .withMessage('Actor must be a string');
-const validateAssignmentName = () =>
+const validateAssignmentNameEV = () =>
   body('assignment_name')
     .notEmpty()
     .withMessage('Assignment name is required')
     .trim()
     .isString()
     .withMessage('Assignment name must be a string');
-const validateCourseId = () =>
+const validateCourseIdEV = () =>
   body('course_id')
     .notEmpty()
     .withMessage('Course ID is required')
     .trim()
     .isNumeric()
     .withMessage('Course ID must be numeric');
-const validateAssignmentId = () =>
+const validateAssignmentIdEV = () =>
   param('assignment_id')
     .notEmpty()
     .withMessage('Assignment ID is required')
@@ -38,29 +50,43 @@ router.post(
   '/api/assignments',
   [
     logApiCall,
-    validateActor(),
-    validateAssignmentName(),
-    validateCourseId(),
-    handleErrors
+    validateActorEV(),
+    validateAssignmentNameEV(),
+    validateCourseIdEV(),
+    handleErrorsEV,
+    validateActorDB,
+    validateCourseIdBodyDB,
+    validateAssignmentNameForCourseDB
   ],
   createAssignment
 );
 
 router.put(
   '/api/assignments/delete/:assignment_id',
-  [logApiCall, validateAssignmentId(), validateActor(), handleErrors],
+  [
+    logApiCall,
+    validateAssignmentIdEV(),
+    validateActorEV(),
+    handleErrorsEV,
+    validateActorDB,
+    validateAssignmentIdParamsDB
+  ],
   deleteAssignment
 );
 
 router.put(
-  '/api/assignments/:assigment_id',
+  '/api/assignments/:assignment_id',
   [
     logApiCall,
-    validateAssignmentId(),
-    validateActor(),
-    validateAssignmentName(),
-    validateCourseId(),
-    handleErrors
+    validateAssignmentIdEV(),
+    validateActorEV(),
+    validateAssignmentNameEV(),
+    validateCourseIdEV(),
+    handleErrorsEV,
+    validateActorDB,
+    validateCourseIdBodyDB,
+    validateAssignmentIdParamsDB,
+    validateAssignmentNameForCourseDB
   ],
   updateAssignment
 );

@@ -1,32 +1,45 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { logApiCall, handleErrors } from '../../shared/apiUtils';
-import { createTask, deleteTask, updateTask } from '../../controllers/tasksController';
+import {
+  logApiCall,
+  handleErrorsEV,
+  validateTaskIdDB,
+  validateTaskNameForAssignmentDB
+} from '../../middleware/middleware';
+import {
+  createTask,
+  deleteTask,
+  updateTask
+} from '../../controllers/tasksController';
+import {
+  validateActorDB,
+  validateAssignmentIdBodyDB
+} from '../../middleware/middleware';
 
 const router = Router();
 
-const validateActor = () =>
+const validateActorEV = () =>
   body('actor')
     .notEmpty()
     .withMessage('Actor is required')
     .trim()
     .isString()
     .withMessage('Actor must be a string');
-const validateTaskName = () =>
+const validateTaskNameEV = () =>
   body('task_name')
     .notEmpty()
     .withMessage('Task name is required')
     .trim()
     .isString()
     .withMessage('Task name must be a string');
-const validateAssignmentId = () =>
+const validateAssignmentIdEV = () =>
   body('assignment_id')
     .notEmpty()
     .withMessage('Assignment ID is required')
     .trim()
     .isNumeric()
     .withMessage('Assignment ID must be numeric');
-const validateTaskId = () =>
+const validateTaskIdEV = () =>
   param('task_id')
     .notEmpty()
     .withMessage('Task ID is required')
@@ -38,17 +51,27 @@ router.post(
   '/api/tasks',
   [
     logApiCall,
-    validateActor(),
-    validateTaskName(),
-    validateAssignmentId(),
-    handleErrors
+    validateActorEV(),
+    validateTaskNameEV(),
+    validateAssignmentIdEV(),
+    handleErrorsEV,
+    validateActorDB,
+    validateAssignmentIdBodyDB,
+    validateTaskNameForAssignmentDB
   ],
   createTask
 );
 
 router.put(
   '/api/tasks/delete/:task_id',
-  [logApiCall, validateTaskId(), validateActor(), handleErrors],
+  [
+    logApiCall,
+    validateTaskIdEV(),
+    validateActorEV(),
+    handleErrorsEV,
+    validateActorDB,
+    validateTaskIdDB
+  ],
   deleteTask
 );
 
@@ -56,11 +79,15 @@ router.put(
   '/api/tasks/:task_id',
   [
     logApiCall,
-    validateTaskId(),
-    validateActor(),
-    validateTaskName(),
-    validateAssignmentId(),
-    handleErrors
+    validateTaskIdEV(),
+    validateActorEV(),
+    validateTaskNameEV(),
+    validateAssignmentIdEV(),
+    handleErrorsEV,
+    validateActorDB,
+    validateAssignmentIdBodyDB,
+    validateTaskIdDB,
+    validateTaskNameForAssignmentDB
   ],
   updateTask
 );
