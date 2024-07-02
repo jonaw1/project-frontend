@@ -39,6 +39,10 @@ const transports: TransportInstance[] = [
     level: 'error',
     datePattern: 'YYYY-MM-DD',
     maxFiles: '30d'
+  }),
+
+  new winston.transports.Console({
+    format: winston.format.simple(),
   })
 ];
 

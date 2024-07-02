@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  cloudcheck-server:
+    image: ghcr.io/atarbalouti/cloudcheck:main
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./storage:/usr/src/app/src/server/routes/uploads
+
+  cloudcheck-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - SESSION_SECRET="your-session-secret"
+      - ROOT_USER_EMAIL="email@email.com"
+      - SEND_EMAILS_EMAIL="send-emails@email.com"
+      - SEND_EMAILS_PW="send-emails-pw"
+      - SEND_EMAILS_SMTP="smtp-host-address"
+      - SEND_EMAILS_PORT=465
+      - SEND_EMAILS_SECURE=true
+      - BASE_URL="http://localhost"
+      - APP_NAME="APP_NAME"
+      - STAGE="development"
+      - CLOUDCHECK_URL="http://cloudcheck:2700"
+    volumes:
+      - ./storage:/usr/src/app/src/server/routes/uploads
+      - ./db:/db/

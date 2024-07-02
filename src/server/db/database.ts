@@ -5,7 +5,7 @@ import { migrate } from './migrate';
 const config = {
   client: 'sqlite3',
   connection: {
-    filename: 'src/server/db/database.sqlite'
+    filename: '/db/database.sqlite',
   },
   useNullAsDefault: true
 };
