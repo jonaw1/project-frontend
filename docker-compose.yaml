@@ -27,7 +27,7 @@ services:
       - BASE_URL="http://localhost"
       - APP_NAME="APP_NAME"
       - STAGE="development"
-      - CLOUDCHECK_URL="http://cloudcheck:2700"
+      - CLOUDCHECK_URL="cloudcheck-server:2700"
     volumes:
       - ./storage:/usr/src/app/src/server/routes/uploads
-      - ./db:/db/
+      - ./db:/app/db

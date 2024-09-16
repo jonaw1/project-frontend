@@ -10,7 +10,7 @@ import assignmentRoutes from './routes/api/assignmentRoutes';
 import taskRoutes from './routes/api/taskRoutes';
 import session from 'express-session';
 import { startDatabase } from './db/database';
-import KnexSessionStore, { StoreFactory } from 'connect-session-knex';
+import KnexSessionStore from 'connect-session-knex';
 import { db } from './db/database';
 import flash from 'connect-flash';
 import { User } from './shared/types';
@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const KnexStore: StoreFactory = KnexSessionStore(session);
+const KnexStore = KnexSessionStore(session);
 app.use(
   session({
     store: new KnexStore({
