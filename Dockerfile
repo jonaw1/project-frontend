@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # Run stage
-FROM node:latest
+FROM node:slim
 WORKDIR /app
 COPY --from=builder /usr/src/frontend-app/dist ./dist
 #COPY --from=builder /usr/src/frontend-app/db ./db
