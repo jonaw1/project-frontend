@@ -6,6 +6,8 @@ import multer from 'multer';
 import path from 'path';
 
 const router = Router();
+const urlString = process.env.CLOUDCHECK_URL as string;
+const CLOUDCHECK_URL = new URL(urlString);
 
 router.get('/api/tasks', async (_req: Request, res: Response) => {
   try {
@@ -59,7 +61,7 @@ router.post('/api/run', async (req, res) => {
     massConfig.preferredLanguage = language
 
     const response = await (
-      await fetch(process.env.CLOUDCHECK_URL as string, {
+      await fetch(CLOUDCHECK_URL, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -92,10 +94,11 @@ router.post('/api/run', async (req, res) => {
         })
       })
     ).json();
-
+    logger.debug(response);
     res.status(200).json({
       feedback: response.data.feedback
     });
+    logger.debug(res);
   } catch (error) {
     logger.error(`Error while trying to run assignment <${task_id}>: ${error}`);
     return res.status(500).json({ error: 'Internal server error' });
@@ -147,7 +150,7 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
     massConfig.preferredLanguage = language
 
     const response = await (
-      await fetch(process.env.CLOUDCHECK_URL as string, {
+      await fetch(CLOUDCHECK_URL, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -179,10 +182,13 @@ router.post('/api/run/advanced', upload.single('file'), async (req, res) => {
         })
       })
     ).json();
+    logger.debug(response.data);
 
     res.status(200).json({
       feedback: response.data.feedback
     });
+    logger.debug(res);
+    return res;
   } catch (error) {
     logger.error(`Error while trying to run assignment <${task_id}>: ${error}`);
     return res.status(500).json({ error: 'Internal server error' });
